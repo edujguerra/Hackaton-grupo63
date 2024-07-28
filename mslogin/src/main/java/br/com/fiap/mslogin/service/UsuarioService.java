@@ -17,10 +17,6 @@ public class UsuarioService {
         this.usuarioRepository = repository;
     }
 
-    public List<User> buscarTodos() {
-        return usuarioRepository.findAll();
-    }
-
     public ResponseEntity<Object> buscarUm(Long id ) {
 
         User cliente = usuarioRepository.findById(id).orElse(null);

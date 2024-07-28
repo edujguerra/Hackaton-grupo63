@@ -12,28 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 @AllArgsConstructor
 public class AuthController {
 
     private AuthService authService;
 
-    @PostMapping("/registrar")
-    public ResponseEntity<UserDTO> createNewUser(@RequestBody SingUpRequest singUpRequest) {
-        return ResponseEntity.status(201).body(authService.createUser(singUpRequest));
-    }
-
-    @PostMapping("/login")
+    @PostMapping("/autenticacao")
     public ResponseEntity<AuthenticateUser> login(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
         return ResponseEntity.ok(authService.authenticate(authenticationRequest));
-    }
-
-    @GetMapping("/validar")
-    public ResponseEntity<String> validate(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
-        if (authorizationHeader.contains("Bearer ")) {
-            authorizationHeader = authorizationHeader.replace("Bearer ","");
-        }
-        authService.validateToken(authorizationHeader);
-        return ResponseEntity.ok("Validado!");
     }
 }

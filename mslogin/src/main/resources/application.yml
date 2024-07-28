@@ -5,8 +5,8 @@ mysql:
   username: root
   password: password
   schema: usuarios
-#  url: 127.0.0.1:3309
-  url: jdbc:mysql://dbusuario:3306/usuarios?useSSL=false&serverTimezone=UTC
+  url: 127.0.0.1:3309
+  #url: jdbc:mysql://dbusuario:3306/usuarios?useSSL=false&serverTimezone=UTC
 
 spring:
   datasource:
@@ -28,4 +28,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+
 

@@ -1,6 +1,5 @@
 package br.com.fiap.mslogin.service;
 
-import br.com.fiap.mslogin.enums.UserRole;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -11,7 +10,6 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Component
 public class JwtService {
@@ -23,25 +21,21 @@ public class JwtService {
     }
 
 
-    public String generateToken(String email, UserRole userRole, Long id) {
+    public String generateToken(String usuario, Long id) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", userRole);
 
-        if (userRole == UserRole.CUSTOMER) {
-            claims.put("cartId", UUID.randomUUID().toString());
-            claims.put("userId", id);
-        }
+        claims.put("userId", id);
 
-        return createToken(claims, email);
+        return createToken(claims, usuario);
     }
 
-    private String createToken(Map<String, Object> claims, String email) {
+    private String createToken(Map<String, Object> claims, String usuario) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(email)
+                .setSubject(usuario)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 90))
-                .setIssuer("API Comercio")
+                .setIssuer("API Hackaton")
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 

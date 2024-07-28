@@ -1,2 +1,2 @@
-# TechChallenge5_Microsservicos
+# Hackaton
 Projeto realizado para a Pos-Tech da FIAP
