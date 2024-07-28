@@ -33,23 +33,6 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
 
-
-    public UserDTO createUser(SingUpRequest singUpRequest) {
-        userRepository.findFirstByUsuario(singUpRequest.usuario())
-                .ifPresent(user -> {
-                    throw new UserException(
-                            HttpStatus.BAD_REQUEST.value(),
-                            "Usuário   " + singUpRequest.usuario() + " já existe"
-                    );
-                });
-
-        var user = singUpRequest.toUser();
-        user.setSenha(bCryptPasswordEncoder.encode(singUpRequest.senha()));
-
-        final User createdUser = userRepository.save(user);
-        return UserDTO.fromUser(createdUser);
-    }
-
     public AuthenticateUser authenticate(AuthenticationRequest authenticationRequest) {
         try {
             authenticationManager.authenticate(
@@ -59,7 +42,7 @@ public class AuthService {
                     )
             );
         } catch (BadCredentialsException e) {
-            throw new UnauthorizedException(403, "Usuário e/ou senha inválido(s).");
+            throw new UnauthorizedException(401, "Usuário e/ou senha inválido(s).");
         }
 
         UserDetails userDetails = loadUserByUsername(authenticationRequest.usuario());
@@ -67,24 +50,27 @@ public class AuthService {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            String jwt = generateToken(
+            String jwt90 = generateToken(
                     userDetails.getUsername(),
-                    user.getId()
+                    user.getId(),
+                    90
             );
 
-            return new AuthenticateUser(user.getId(), user.getUsuario(), jwt);
+            String jwt2 = generateToken(
+                    userDetails.getUsername(),
+                    user.getId(),
+                    2
+            );
+
+            return new AuthenticateUser( jwt90,jwt2);
 
         }
 
         throw new UnauthorizedException(401, "Não autorizado.");
     }
 
-    public void validateToken(String token) {
-        jwtService.validateToken(token);
-    }
-
-    public String generateToken(String email, Long id) {
-        return jwtService.generateToken(email, id);
+    public String generateToken(String email, Long id, Integer minutos) {
+        return jwtService.generateToken(email, id, minutos);
     }
 
     private UserDetails loadUserByUsername(String usuario) throws UsernameNotFoundException {

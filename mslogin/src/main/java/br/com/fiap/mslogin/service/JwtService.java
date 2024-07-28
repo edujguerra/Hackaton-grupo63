@@ -16,25 +16,20 @@ public class JwtService {
 
     public static final String SECRET = "66e48fcca777ed0975ff8a7f51198db678aea9661298bcd34adace1ecefa2cce";
 
-    public void validateToken(final String token) {
-        Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token);
-    }
-
-
-    public String generateToken(String usuario, Long id) {
+    public String generateToken(String usuario, Long id, Integer minutos) {
         Map<String, Object> claims = new HashMap<>();
 
         claims.put("userId", id);
 
-        return createToken(claims, usuario);
+        return createToken(claims, usuario, minutos);
     }
 
-    private String createToken(Map<String, Object> claims, String usuario) {
+    private String createToken(Map<String, Object> claims, String usuario, Integer minutos ) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(usuario)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 90))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * minutos))
                 .setIssuer("API Hackaton")
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }

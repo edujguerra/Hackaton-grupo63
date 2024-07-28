@@ -41,13 +41,13 @@ public class ControllerExceptionHandler {
                 .collect(Collectors.toList());
 
         ValidationErrorResponse errorResponse = new ValidationErrorResponse(errors);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, String>> handleJsonErrors(HttpMessageNotReadableException error) {
         Map<String, String> errorResponse = Map.of("error", error.getMessage());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }
