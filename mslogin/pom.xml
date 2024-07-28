@@ -48,6 +48,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- swagger-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
         <!--Security        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -99,6 +106,7 @@
             <artifactId>assertj-core</artifactId>
             <version>3.24.2</version>
         </dependency>
+
         <!-- para testar controller de forma mais fluida -->
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -155,6 +163,12 @@
             <version>3.2.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-data-rest</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
