@@ -25,20 +25,26 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var tokenJWT = recuperarToken(request);
+        try {
+            var tokenJWT = recuperarToken(request);
 
-        if (tokenJWT != null) {
-            var subject = tokenService.getSubject(tokenJWT);
-            var clains = tokenService.getClains(tokenJWT);
+            if (tokenJWT != null) {
+                var subject = tokenService.getSubject(tokenJWT);
+                var clains = tokenService.getClains(tokenJWT);
 
-            System.out.println(subject);
-            System.out.println(clains);
+                System.out.println(subject);
+                System.out.println(clains);
 
-            var authentication = new UsernamePasswordAuthenticationToken(subject, null, AUTHORITIES);
+                var authentication = new UsernamePasswordAuthenticationToken(subject, null, AUTHORITIES);
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            filterChain.doFilter(request, response);
+        } catch (Exception ex) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(ex.getLocalizedMessage());
         }
-        filterChain.doFilter(request, response);
     }
 
     @SuppressWarnings("serial" )
