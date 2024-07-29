@@ -14,6 +14,8 @@ public abstract class ClienteHelper {
         cliente.setCpf("10212");
         cliente.setCep("95020-190");
         cliente.setEmail("email");
+        cliente.setPais("pais");
+        cliente.setFone("1234566");
 
         return cliente;
     }

@@ -11,12 +11,14 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -49,18 +51,14 @@ public class ClienteControllerTest {
     void RegistrarCliente() throws Exception {
         //arrange
         Cliente cliente = ClienteHelper.gerarCliente();
-        when(clienteService.salvar(any(Cliente.class)))
-                .thenAnswer( i -> i.getArgument(0));
 
         //act & assert
-        mockMvc.perform(
-                    post("/api/clientes")
-                            .contentType(MediaType.APPLICATION_JSON)
-                    .content(ClienteHelper.asJsonString(cliente))
-                )
-                .andExpect(status().isCreated());
-        verify(clienteService, times(1)).salvar(any(Cliente.class));
+        ResultActions result = mockMvc.perform(post("/api/cliente")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ClienteHelper.asJsonString(cliente)));
 
+        result.andExpect(status().isOk());
+        verify(clienteService, times(1)).salvar(any(Cliente.class));
     }
 
     @Test
@@ -69,7 +67,7 @@ public class ClienteControllerTest {
         Cliente cliente = ClienteHelper.gerarCliente();
         cliente.setId(id);
 
-        mockMvc.perform(get("/api/clientes/{id}", id)
+        mockMvc.perform(get("/api/cliente/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 

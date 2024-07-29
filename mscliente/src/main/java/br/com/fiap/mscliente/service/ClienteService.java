@@ -34,7 +34,8 @@ public class ClienteService {
             }
 
             cliente = clienteRepository.save(cliente);
-            return ResponseEntity.ok("Id_Cliente : " + cliente.getId());
+            //return ResponseEntity.ok("Id_Cliente : " + cliente.getId());
+            return ResponseEntity.ok(cliente);
 
         } catch (BadCredentialsException e) {
             throw new UnauthorizedException(401, "Usuário e/ou senha inválido(s).");
