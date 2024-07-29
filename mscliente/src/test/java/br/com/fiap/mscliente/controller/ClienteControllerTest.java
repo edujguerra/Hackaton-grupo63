@@ -64,29 +64,6 @@ public class ClienteControllerTest {
     }
 
     @Test
-    void ListarCliente() throws Exception {
-
-        mockMvc.perform(get("/api/clientes")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-        verify(clienteService, times(1))
-                .buscarTodos();
-    }
-
-    @Test
-    void DeletarCliente() throws Exception {
-
-        Integer id = 301;
-        when(clienteService.excluir(any(Integer.class)))
-                .thenReturn(true);
-
-        mockMvc.perform(delete("/api/clientes/{id}", id))
-                .andExpect(status().isOk());
-        verify(clienteService, times(1))
-                .excluir(any(Integer.class));
-    }
-
-    @Test
     void ListarUmCliente() throws Exception {
         Integer id = 301;
         Cliente cliente = ClienteHelper.gerarCliente();

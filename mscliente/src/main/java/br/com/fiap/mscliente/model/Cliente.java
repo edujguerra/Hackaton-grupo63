@@ -14,27 +14,23 @@ public class Cliente {
     @Column(name = "id_cliente")
     private Integer id;
 
-    @NotBlank(message = "Nome não pode ser vazio.")
-    @Column(name = "nm_cliente", nullable = false)
-    private String nome;
-
     @NotBlank(message = "CPF não pode ser vazio.")
     @Column(name = "nr_cpf", nullable = false)
     private String cpf;
 
+    @NotBlank(message = "Nome não pode ser vazio.")
+    @Column(name = "nm_cliente", nullable = false)
+    private String nome;
+
     @NotBlank(message = "Email não pode ser vazio.")
-    @Column(name = "nm_email", nullable = false)
+    @Column(name = "nr_email", nullable = false)
     private String email;
 
-    @NotBlank(message = "CEP não pode ser vazio.")
-    @Column(name = "nr_cep", nullable = false)
-    private String cep;
+    @Column(name = "nr_fone")
+    private String fone;
 
     @Column(name = "ds_enderec")
-    private String endereco;
-
-    @Column(name = "nm_bairro")
-    private String bairro;
+    private String rua;
 
     @Column(name = "nm_cidade")
     private String cidade;
@@ -42,6 +38,12 @@ public class Cliente {
     @Column(name = "sg_uf")
     private String uf;
 
-    @Column(name = "nr_compl")
-    private String complemento;
+    @NotBlank(message = "CEP não pode ser vazio.")
+    @Column(name = "nr_cep", nullable = false)
+    private String cep;
+
+    @NotBlank(message = "País não pode ser vazio.")
+    @Column(name = "nm_pais", nullable = false)
+    private String pais;
+
 }

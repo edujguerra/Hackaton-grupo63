@@ -9,13 +9,11 @@ public abstract class ClienteHelper {
         Cliente cliente = new Cliente();
         cliente.setNome("Eduardo");
         cliente.setUf("RS");
-        cliente.setEndereco("rua");
+        cliente.setRua("rua");
         cliente.setCidade("Caxias");
-        cliente.setBairro("bairro");
         cliente.setCpf("10212");
         cliente.setCep("95020-190");
         cliente.setEmail("email");
-        cliente.setComplemento("ap 2");
 
         return cliente;
     }

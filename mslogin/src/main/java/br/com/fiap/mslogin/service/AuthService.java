@@ -2,14 +2,10 @@ package br.com.fiap.mslogin.service;
 
 import br.com.fiap.mslogin.entity.User;
 import br.com.fiap.mslogin.exception.UnauthorizedException;
-import br.com.fiap.mslogin.exception.UserException;
 import br.com.fiap.mslogin.model.AuthenticateUser;
 import br.com.fiap.mslogin.model.AuthenticationRequest;
-import br.com.fiap.mslogin.model.SingUpRequest;
-import br.com.fiap.mslogin.model.UserDTO;
 import br.com.fiap.mslogin.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

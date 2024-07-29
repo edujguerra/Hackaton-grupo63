@@ -1,9 +1,11 @@
 package br.com.fiap.mscliente.infra.security;
 
+import br.com.fiap.mslogin.exception.UnauthorizedException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -21,13 +23,13 @@ public class TokenService {
         try {
             var algoritmo = Algorithm.HMAC256(Base64.getDecoder().decode(secret));
             return JWT.require(algoritmo)
-                    .withIssuer("API Comercio")
+                    .withIssuer("API Hackaton")
                     .build()
                     .verify(tokenJWT)
                     .getSubject();
 
         } catch (JWTVerificationException exception) {
-            throw new RuntimeException("Token JWT inválido ou expirado! " + exception.getMessage());
+            throw new BadCredentialsException("Token JWT inválido ou expirado!" );
         }
     }
 
@@ -35,13 +37,13 @@ public class TokenService {
         try {
             var algoritmo = Algorithm.HMAC256(Base64.getDecoder().decode(secret));
             return JWT.require(algoritmo)
-                    .withIssuer("API Comercio")
+                    .withIssuer("API Hackaton")
                     .build()
                     .verify(tokenJWT)
                     .getClaims().toString();
 
         } catch (JWTVerificationException exception) {
-            throw new RuntimeException("Token JWT inválido ou expirado! " + exception.getMessage());
+            throw new UnauthorizedException(401,"Token JWT inválido ou expirado!" );
         }
     }
 }

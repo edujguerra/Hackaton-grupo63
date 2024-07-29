@@ -5,8 +5,10 @@ import java.util.NoSuchElementException;
 
 import br.com.fiap.mscliente.model.CepResponse;
 import br.com.fiap.mscliente.model.Cliente;
+import br.com.fiap.mslogin.exception.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import br.com.fiap.mscliente.repository.ClienteRepository;
@@ -21,42 +23,45 @@ public class ClienteService {
         this.clienteRepository = repository;
     }
 
-    public List<Cliente> buscarTodos() {
-        return clienteRepository.findAll();
-    }
+    public ResponseEntity<Object> salvar(Cliente cliente)  {
 
-    public Cliente salvar(Cliente cliente) {
+        try {
+            ResponseEntity<Object> response = validaCampos(cliente);
+            if (!response.getStatusCode().equals(HttpStatus.OK)  ){
+                return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Cliente com problemas..." + response.getBody());
+            }
 
-        ResponseEntity<Object> response = validaCampos(cliente);
-        if (!response.getStatusCode().equals(HttpStatus.OK)  ){
-            throw new NoSuchElementException("Cliente com problemas..." + response);
+            cliente = clienteRepository.save(cliente);
+            return ResponseEntity.ok("Id_Cliente : " + cliente.getId());
+
+        } catch (BadCredentialsException e) {
+            throw new UnauthorizedException(401, "Usuário e/ou senha inválido(s).");
         }
-
-        cliente = clienteRepository.save(cliente);
-        return cliente;
     }
 
     private ResponseEntity<Object> validaCampos(Cliente cliente) {
 
         if (cliente.getNome() == null
                 || cliente.getNome().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nome não pode ser vazio.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Nome não pode ser vazio.");
         }
         if (cliente.getEmail() == null ||
                 cliente.getEmail().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email não pode ser vazio.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Email não pode ser vazio.");
         }
         if (cliente.getCep() == null ||
                 cliente.getCep().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cep não pode ser vazio.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cep não pode ser vazio.");
         }
         if (cliente.getCpf() == null ||
                 cliente.getCpf().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF não pode ser vazio.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("CPF não pode ser vazio.");
         }
-        if (cliente.getComplemento() == null ||
-                cliente.getComplemento().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Complemento não pode ser vazio.");
+        if (cliente.getPais() == null ||
+                cliente.getPais().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Pais não pode ser vazio.");
         }
 
         try {
@@ -64,13 +69,9 @@ public class ClienteService {
             RestTemplate restTemplate = new RestTemplate();
 
             CepResponse cepResponse = restTemplate.getForEntity(uriCep, CepResponse.class).getBody();
-            if (cliente.getEndereco() == null ||
-                    cliente.getEndereco().isEmpty()) {
-                cliente.setEndereco(cepResponse.getLogradouro());
-            }
-            if (cliente.getBairro() == null ||
-                    cliente.getBairro().isEmpty()) {
-                cliente.setBairro(cepResponse.getBairro());
+            if (cliente.getRua() == null ||
+                    cliente.getRua().isEmpty()) {
+                cliente.setRua(cepResponse.getLogradouro());
             }
             if (cliente.getCidade() == null ||
                     cliente.getCidade().isEmpty()) {
@@ -99,41 +100,4 @@ public class ClienteService {
         }
     }
 
-    public ResponseEntity<Object> atualizar(Integer id, Cliente novo) {
-
-        Cliente existente = clienteRepository.findById(id).orElse(null);
-
-        if (existente != null) {
-            ResponseEntity<Object> response = validaCampos(novo);
-            if (!response.getStatusCode().equals(HttpStatus.OK)  ){
-                return response;
-            }
-
-            existente.setNome(novo.getNome());
-            existente.setUf(novo.getUf());
-            existente.setBairro(novo.getBairro());
-            existente.setCidade(novo.getCidade());
-            existente.setEndereco(novo.getEndereco());
-            existente.setCep(novo.getCep());
-            existente.setComplemento(novo.getComplemento());
-            existente.setEmail(novo.getEmail());
-            existente.setCpf(novo.getCpf());
-
-            return ResponseEntity.ok(clienteRepository.save(existente));
-        } else {
-            throw new NoSuchElementException("Cliente não Encontrado.");
-        }
-    }
-
-    public boolean excluir(Integer id) {
-
-        Cliente existente = clienteRepository.findById(id).orElse(null);
-
-        if (existente != null) {
-            clienteRepository.delete(existente);
-        } else {
-            throw new NoSuchElementException("Cliente não encontrado");
-        }
-        return true;
-    }
 }
