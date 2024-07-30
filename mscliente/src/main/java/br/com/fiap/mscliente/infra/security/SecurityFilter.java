@@ -1,6 +1,5 @@
 package br.com.fiap.mscliente.infra.security;
 
-import br.com.fiap.mslogin.exception.UnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

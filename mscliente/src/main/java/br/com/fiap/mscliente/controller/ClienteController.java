@@ -1,9 +1,8 @@
 package br.com.fiap.mscliente.controller;
 
+import br.com.fiap.mscliente.infra.exception.UnauthorizedException;
 import br.com.fiap.mscliente.model.Cliente;
 import br.com.fiap.mscliente.service.ClienteService;
-import br.com.fiap.mslogin.exception.UnauthorizedException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;

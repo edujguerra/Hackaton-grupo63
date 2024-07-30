@@ -149,12 +149,6 @@
             <version>2.2.0</version>
         </dependency>
         <dependency>
-            <groupId>br.com.fiap</groupId>
-            <artifactId>mslogin</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
         </dependency>

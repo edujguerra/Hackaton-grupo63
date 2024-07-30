@@ -1,11 +1,8 @@
 package br.com.fiap.mscliente.service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
+import br.com.fiap.mscliente.infra.exception.UnauthorizedException;
 import br.com.fiap.mscliente.model.CepResponse;
 import br.com.fiap.mscliente.model.Cliente;
-import br.com.fiap.mslogin.exception.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
