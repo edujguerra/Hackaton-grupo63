@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PagamentoRepository extends JpaRepository<Pagamento, Integer> {
 
-    Optional<Pagamento> findFirstByIdCarrinhoDeCompras(Integer idCarrinhoDeCompras);
+
+    Optional<Pagamento> findFirstByCpf(String cpf);
 }

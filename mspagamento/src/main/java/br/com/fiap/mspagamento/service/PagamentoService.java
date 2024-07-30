@@ -3,15 +3,14 @@ package br.com.fiap.mspagamento.service;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import br.com.fiap.mspagamento.infra.exception.PagamentoDuplicadoException;
 import br.com.fiap.mspagamento.infra.security.SecurityFilter;
-import br.com.fiap.mspagamento.model.Enum.TipoPagamentoEnum;
 import br.com.fiap.mspagamento.model.Pagamento;
-import br.com.fiap.mspagamento.model.dto.ItemCarrinhoDTO;
-import br.com.fiap.mspagamento.model.dto.PagamentoDTO;
+import br.com.fiap.mspagamento.model.PagamentoDTO;
 import br.com.fiap.mspagamento.repository.PagamentoRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,39 +61,31 @@ public class PagamentoService {
         }
     }
 
-    public List<ItemCarrinhoDTO> listarItensCarrinho(Integer carrinhoComprasId){
-        
+    public double obterLimiteCartaoCredito(String cpf){
+
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", securityFilter.getTokenBruto());
 
-        URI uri = UriComponentsBuilder.fromUriString("http://mscarrinhocompras:8083/api/carrinhos/itensCarrinho/{carrinhoComprasId}")
-                .buildAndExpand(carrinhoComprasId)
+        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/{cpf}")
+                .buildAndExpand(cpf)
                 .toUri();
 
         RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
         try {
             ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-            JsonNode itensCarrinho = objectMapper.readTree(response.getBody());
-            List<ItemCarrinhoDTO> listaItensCarrinho = new ArrayList<ItemCarrinhoDTO>();
-            for (JsonNode itemCarrinho : itensCarrinho) {
-                ItemCarrinhoDTO itemCarrinhoDTO = new ItemCarrinhoDTO();
-                itemCarrinhoDTO.setId(itemCarrinho.get("id").asInt());
-                itemCarrinhoDTO.setIdProduto(itemCarrinho.get("idProduto").asInt());
-                itemCarrinhoDTO.setQuantidade(itemCarrinho.get("quantidade").asInt());
-
-                listaItensCarrinho.add(itemCarrinhoDTO);
-            }
-            return listaItensCarrinho;
+            JsonNode cartaoCredito = objectMapper.readTree(response.getBody());
+            double limite = cartaoCredito.get("limite").asDouble();
+            return limite;
         } catch (HttpServerErrorException e) {
-            throw new NoSuchElementException("Carrinho de compras não encontrado");
+            throw new NoSuchElementException("Cartão de crédito não encontrado");
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Carrinho de compras não encontrado");
+            throw new NoSuchElementException("Cartão de crédito não encontrado");
         } catch(IOException e){
-            throw new RuntimeException("Erro no método listar itens carrinho");
+            throw new RuntimeException("Erro no método obter limite do cartão de crédito");
         }
     }
 
-    public double exibirValorTotalCarrinho (Integer carrinhoComprasId){
+    /*public double exibirValorTotalCarrinho (Integer carrinhoComprasId){
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", securityFilter.getTokenBruto());
@@ -120,11 +111,15 @@ public class PagamentoService {
         }else{
             throw new RuntimeException("Erro no metodo verificarDisponibilidadeProdutos");
         }
-    }
+    }*/
 
-    public PagamentoDTO realizarPagamento (Integer carrinhoComprasId, TipoPagamentoEnum tipoPagamentoEnum){
+    public PagamentoDTO realizarPagamento (String cpf, String numero, Date dataValidade, String cvv, Double valor){
+        obterLimiteCartaoCredito(cpf);
 
-        Pagamento meuPagamento = pagamentoRepository.findFirstByIdCarrinhoDeCompras(carrinhoComprasId).orElse(null);
+
+
+        Pagamento meuPagamento = pagamentoRepository.findFirstByCpf(cpf).orElse(null);
+
         if(meuPagamento != null && meuPagamento.getStatusPagamento() != null) {
             System.out.println("Pagamento duplicado!");
             throw new PagamentoDuplicadoException();
@@ -152,12 +147,13 @@ public class PagamentoService {
     public Pagamento toPagamento (PagamentoDTO pagamentoDTO) {
         return new Pagamento(
                 pagamentoDTO.getId(),
-                pagamentoDTO.getIdCarrinhoDeCompras(),
-                pagamentoDTO.getQuantidadeTotal(),
-                pagamentoDTO.getValorTotal(),
-                pagamentoDTO.getTipoPagamento(),
-                pagamentoDTO.getStatusPagamento()
+                pagamentoDTO.getCpf(),
+                pagamentoDTO.getNumero(),
+                pagamentoDTO.getData_validade(),
+                pagamentoDTO.getCvv(),
+                pagamentoDTO.getValor()
         );
     }
+
 
 }

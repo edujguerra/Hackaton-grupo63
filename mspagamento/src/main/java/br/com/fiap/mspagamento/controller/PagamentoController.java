@@ -2,7 +2,7 @@ package br.com.fiap.mspagamento.controller;
 
 import br.com.fiap.mspagamento.infra.exception.PagamentoDuplicadoException;
 import br.com.fiap.mspagamento.model.Pagamento;
-import br.com.fiap.mspagamento.model.dto.PagamentoDTO;
+import br.com.fiap.mspagamento.model.PagamentoDTO;
 import br.com.fiap.mspagamento.service.PagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,10 +27,10 @@ public class PagamentoController {
     @PostMapping
     public ResponseEntity<?> registrarPagamento (@RequestBody Pagamento pagamento) {
         try{
-            PagamentoDTO novoPagamento = pagamentoService.realizarPagamento(pagamento.getIdCarrinhoDeCompras(),pagamento.getTipoPagamento());
+            PagamentoDTO novoPagamento = pagamentoService.realizarPagamento(pagamento.getCpf(),pagamento.getNumero(),pagamento.getData_validade(), pagamento.getCvv(), pagamento.getValor());
             return new ResponseEntity<>(novoPagamento, HttpStatus.CREATED);
         } catch(NoSuchElementException e) {
-            return new ResponseEntity<>("Carrinho de compras ou tipo de pagamento não estão disponiveis", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Exception do registrar pagamento", HttpStatus.BAD_REQUEST);
         } catch (PagamentoDuplicadoException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

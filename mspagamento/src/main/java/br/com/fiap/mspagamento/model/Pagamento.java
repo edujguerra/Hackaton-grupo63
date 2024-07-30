@@ -1,13 +1,12 @@
 package br.com.fiap.mspagamento.model;
 
-import br.com.fiap.mspagamento.model.Enum.TipoPagamentoEnum;
-import br.com.fiap.mspagamento.model.dto.ItemCarrinhoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 
-import java.util.List;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -16,17 +15,29 @@ import java.util.List;
 public class Pagamento {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    private Integer idCarrinhoDeCompras;
+    @NotBlank(message = "CPF não pode ser vazio.")
+    @Column(name = "cpf", nullable = false)
+    private String cpf;
 
-    private int quantidadeTotal;
+    @NotBlank(message = "Numero do cartão não pode ser vazio.")
+    @Column(name = "numero", nullable = false)
+    private String numero;
 
-    private double valorTotal;
+    @NotBlank(message = "Data de validade do cartão não pode ser vazio.")
+    @Column(name = "data_validade", nullable = false)
+    private Date data_validade;
 
-    private TipoPagamentoEnum tipoPagamento;
+    @NotBlank(message = "CVV do cartão não pode ser vazio.")
+    @Column(name = "cvv", nullable = false)
+    private String cvv;
 
-    private String statusPagamento;
+    @NotBlank(message = "Valor do pagamento não pode ser vazio.")
+    @Column(name = "valor", nullable = false)
+    private Double valor;
+
 
 }

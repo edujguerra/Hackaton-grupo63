@@ -1,28 +1,27 @@
-package br.com.fiap.mspagamento.model.dto;
+package br.com.fiap.mspagamento.model;
 
-import br.com.fiap.mspagamento.model.Enum.TipoPagamentoEnum;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
+import java.util.Date;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class PagamentoDTO {
 
-    private Integer id;
+    private Long id;
 
-    private Integer idCarrinhoDeCompras;
+    private String cpf;
 
-    private List<ItemCarrinhoDTO> itensCarrinho;
+    private String numero;
 
-    private int quantidadeTotal;
+    private Date data_validade;
 
-    private double valorTotal;
+    private String cvv;
 
-    private TipoPagamentoEnum tipoPagamento;
-
-    private String statusPagamento;
+    private Double valor;
 }
