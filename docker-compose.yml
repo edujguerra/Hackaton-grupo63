@@ -60,6 +60,34 @@ services:
     networks:
       - minha-rede
 
+  dbcartaocredito:
+    container_name: dbcartaocredito
+    image: mysql:5.7
+    ports:
+      - '3307:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: cartaocredito
+    volumes:
+      - db_cartaocredito:/var/lib/mysql
+    networks:
+      - minha-rede
+
+  mscartaocredito:
+    container_name: mscartaocredito
+    build:
+      context: /mscartaocredito
+      dockerfile: Dockerfile
+    ports:
+      - '8082:8082'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://dbcartaocredito:3306/clientes?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - dbcartaocredito
+    networks:
+      - minha-rede
 
 networks:
   minha-rede:
@@ -68,3 +96,4 @@ networks:
 volumes:
   db_client:
   db_usuario:
+  db_cartaocredito:
