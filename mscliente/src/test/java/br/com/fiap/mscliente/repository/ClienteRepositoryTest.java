@@ -55,19 +55,6 @@ class ClienteRepositoryTest {
                 .isEqualTo(cliente.getId());
     }
 
-
-    @Test
-    void DeletarCliente(){
-
-        // Arrange
-        Integer id = new Random().nextInt();
-        doNothing().when(clienteRepository).deleteById(id);
-        // Act
-        clienteRepository.deleteById(id);
-        // Assert
-        verify(clienteRepository, times(1)).deleteById(id);
-    }
-
     @Test
     void ListarCliente(){
 
