@@ -8,9 +8,6 @@ public abstract class ClienteHelper {
     public static Cliente gerarCliente() {
         Cliente cliente = new Cliente();
         cliente.setNome("Eduardo");
-        cliente.setUf("RS");
-        cliente.setRua("rua");
-        cliente.setCidade("Caxias");
         cliente.setCpf("10212");
         cliente.setCep("95020-190");
         cliente.setEmail("email");

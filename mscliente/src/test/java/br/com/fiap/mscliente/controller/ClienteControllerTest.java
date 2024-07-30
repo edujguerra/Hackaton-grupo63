@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -63,14 +62,15 @@ public class ClienteControllerTest {
 
     @Test
     void ListarUmCliente() throws Exception {
-        Integer id = 301;
+        Integer id = 1;
         Cliente cliente = ClienteHelper.gerarCliente();
         cliente.setId(id);
 
-        mockMvc.perform(get("/api/cliente/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        ResultActions result = mockMvc.perform(get("/api/cliente/{id}",id)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
 
+        result.andExpect(status().isOk());
         verify(clienteService, times(1)).buscarUm(any(Integer.class));
     }
 }

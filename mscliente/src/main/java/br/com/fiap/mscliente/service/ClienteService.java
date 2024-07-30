@@ -67,6 +67,11 @@ public class ClienteService {
             RestTemplate restTemplate = new RestTemplate();
 
             CepResponse cepResponse = restTemplate.getForEntity(uriCep, CepResponse.class).getBody();
+            if (cepResponse.getCep() == null ||
+                    cepResponse.getCep().isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cep não encontrado. ");
+            }
+
             if (cliente.getRua() == null ||
                     cliente.getRua().isEmpty()) {
                 cliente.setRua(cepResponse.getLogradouro());
