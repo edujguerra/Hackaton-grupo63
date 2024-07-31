@@ -30,21 +30,23 @@ public class CartaoCreditoServiceImpl implements CartaoCreditoService{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CartaoCreditoServiceImpl.class);
 
+    @Autowired
     private CartaoCreditoRepository cartaoCreditoRepository;
+    @Autowired
     private SecurityFilter securityFilter;
+    @Autowired
     private RestTemplate restTemplate;
-//    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 //    private ModelMapper modelMapper;
 
-    @Autowired
     public CartaoCreditoServiceImpl(CartaoCreditoRepository cartaoCreditoRepository, SecurityFilter securityFilter,
-                                    RestTemplate restTemplate
-//                                    ObjectMapper objectMapper, ModelMapper modelMapper
+                                    RestTemplate restTemplate, ObjectMapper objectMapper
+//                                    , ModelMapper modelMapper
                                     ) {
         this.cartaoCreditoRepository = cartaoCreditoRepository;
         this.securityFilter = securityFilter;
         this.restTemplate = restTemplate;
-//        this.objectMapper = objectMapper;
+        this.objectMapper = objectMapper;
 //        this.modelMapper = modelMapper;
     }
 
@@ -68,6 +70,15 @@ public class CartaoCreditoServiceImpl implements CartaoCreditoService{
         cartaoCreditoRepository.save(cartaoCredito);
 
         return cartaoCredito;
+    }
+
+    @Override
+    public List<CartaoCredito> obterCartoesPorCpf(String cpf) {
+        List<CartaoCredito> listaDeCartoes = cartaoCreditoRepository.findByCpf(cpf);
+        if (listaDeCartoes.isEmpty()) {
+            throw new NoSuchElementException("Não existem Cartao de Credito cadastrado para CPF solicitado");
+        }
+        return listaDeCartoes;
     }
 
     private ResponseEntity<?> validaCampoVazio(CartaoCreditoDTO cartaoCreditoDTO) {
