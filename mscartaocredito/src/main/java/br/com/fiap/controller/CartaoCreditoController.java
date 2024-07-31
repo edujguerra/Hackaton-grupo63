@@ -37,14 +37,11 @@ public class CartaoCreditoController {
         } catch (LimiteCartoesException e) {
             return new ResponseEntity<>("Limite de cartoes atingido: " + e.getMessage(),
                     HttpStatus.FORBIDDEN);
-        }
-        //TODO: Verificar se cai nesse erro direto ou se precisa tratar
-        catch (AuthorizationDeniedException e) {
+        } catch (AuthorizationDeniedException e) {
             return new ResponseEntity<>("Erro de autorização.", HttpStatus.UNAUTHORIZED);
         }
     }
 
-    //TODO: fazer metodo obterCartaoPorCpf() retorna List<CartaoCredito>
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<?> obterCartoesPorCpf(@PathVariable String cpf) {
         try {

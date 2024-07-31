@@ -33,4 +33,9 @@ public class ClienteController {
         return service.buscarUm(id);
     }
 
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<Object> buscarPorCPF(@PathVariable String cpf) {
+        return service.buscarPorCPF(cpf);
+    }
+
 }
