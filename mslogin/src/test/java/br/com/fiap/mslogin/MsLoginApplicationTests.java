@@ -10,4 +10,9 @@ class MsLoginApplicationTests {
     void contextLoads() {
     }
 
+    @Test
+    public void test_application_starts_with_no_arguments() {
+        String[] args = {};
+        MsLoginApplication.main(args);
+    }
 }

@@ -12,8 +12,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserServiceTest {
 
@@ -60,4 +64,25 @@ class UserServiceTest {
                 .isEqualTo(user.getId());
     }
 
+    @Test
+    public void test_username_not_found_in_repository() {
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
+
+        CustomUserDetailsService service = new CustomUserDetailsService();
+        Mockito.when(userRepository.findFirstByUsuario("invalidUser")).thenReturn(Optional.empty());
+
+        Assertions.assertThat(UsernameNotFoundException.class);
+    }
+
+    @Test
+    public void test_generate_token_with_valid_user_id_and_expiration_time() {
+        JwtService jwtService = new JwtService();
+        String usuario = "testUser";
+        Long id = 12345L;
+        Integer minutos = 100000;
+
+        String token = jwtService.generateToken(usuario, id, minutos);
+
+        assertNotNull(token);
+    }
 }

@@ -9,7 +9,7 @@ public abstract class UserHelper {
     public static User gerarUser() {
         User user = new User();
         user.setUsuario("Eduardo");
-        user.setSenha("10212");
+        user.setSenha("123456");
 
         return user;
     }
