@@ -1,4 +1,4 @@
-package br.com.fiap.mscartaocredito.config;
+package br.com.fiap.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

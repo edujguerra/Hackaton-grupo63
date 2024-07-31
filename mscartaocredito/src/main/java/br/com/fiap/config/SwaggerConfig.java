@@ -1,4 +1,4 @@
-package br.com.fiap.mscartaocredito.config;
+package br.com.fiap.config;
 
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;

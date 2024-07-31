@@ -1,10 +1,10 @@
-package br.com.fiap.mscartaocredito.service;
+package br.com.fiap.service;
 
-import br.com.fiap.mscartaocredito.infra.exception.LimiteCartoesException;
-import br.com.fiap.mscartaocredito.infra.security.SecurityFilter;
-import br.com.fiap.mscartaocredito.model.CartaoCredito;
-import br.com.fiap.mscartaocredito.model.CartaoCreditoDTO;
-import br.com.fiap.mscartaocredito.repository.CartaoCreditoRepository;
+import br.com.fiap.infra.exception.LimiteCartoesException;
+import br.com.fiap.infra.security.SecurityFilter;
+import br.com.fiap.model.CartaoCredito;
+import br.com.fiap.model.CartaoCreditoDTO;
+import br.com.fiap.repository.CartaoCreditoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -30,28 +30,22 @@ public class CartaoCreditoServiceImpl implements CartaoCreditoService{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CartaoCreditoServiceImpl.class);
 
-    @Autowired
     private CartaoCreditoRepository cartaoCreditoRepository;
-
-    @Autowired
     private SecurityFilter securityFilter;
-
-    @Autowired
     private RestTemplate restTemplate;
+//    private ObjectMapper objectMapper;
+//    private ModelMapper modelMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private ModelMapper modelMapper;
-
     public CartaoCreditoServiceImpl(CartaoCreditoRepository cartaoCreditoRepository, SecurityFilter securityFilter,
-                                    RestTemplate restTemplate, ObjectMapper objectMapper, ModelMapper modelMapper) {
+                                    RestTemplate restTemplate
+//                                    ObjectMapper objectMapper, ModelMapper modelMapper
+                                    ) {
         this.cartaoCreditoRepository = cartaoCreditoRepository;
         this.securityFilter = securityFilter;
         this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
-        this.modelMapper = modelMapper;
+//        this.objectMapper = objectMapper;
+//        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -78,7 +72,8 @@ public class CartaoCreditoServiceImpl implements CartaoCreditoService{
 
     private ResponseEntity<?> validaCampoVazio(CartaoCreditoDTO cartaoCreditoDTO) {
 
-        if( cartaoCreditoDTO.getId() == null ||
+        if(
+//                cartaoCreditoDTO.getId() == null ||
                 isEmpty(cartaoCreditoDTO.getCpf()) ||
                 cartaoCreditoDTO.getLimite() == null ||
                 isEmpty(cartaoCreditoDTO.getNumero()) ||
@@ -102,17 +97,20 @@ public class CartaoCreditoServiceImpl implements CartaoCreditoService{
         return cartaoCredito;
     }
 
-    private CartaoCreditoDTO toDTO(CartaoCredito cartaoCredito) {
-        return modelMapper.map(cartaoCredito, CartaoCreditoDTO.class);
-    }
+//    private CartaoCreditoDTO toDTO(CartaoCredito cartaoCredito) {
+//        return modelMapper.map(cartaoCredito, CartaoCreditoDTO.class);
+//    }
 
     protected Boolean verificarClienteExistente(String cpf) {
 
+        //TODO: Criar o metodo de buscar por CPF no MSClientes
+        cpf = "1";
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", securityFilter.getTokenBruto());
 
         //TODO: Criar no msCliente o endpoint que busca cliente por cpf (atualmente tem o que busca por id)
-        URI uri = UriComponentsBuilder.fromUriString("http://msclientes:8082/api/clientes/{cpf}")
+//        URI uri = UriComponentsBuilder.fromUriString("http://msclientes:8081/api/cliente/{cpf}")
+        URI uri = UriComponentsBuilder.fromUriString("http://127.0.0.1:8081/api/cliente/{cpf}")
                 .buildAndExpand(cpf)
                 .toUri();
 

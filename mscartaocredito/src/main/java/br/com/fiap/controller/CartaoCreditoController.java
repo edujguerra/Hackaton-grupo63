@@ -1,9 +1,9 @@
-package br.com.fiap.mscartaocredito.controller;
+package br.com.fiap.controller;
 
-import br.com.fiap.mscartaocredito.infra.exception.LimiteCartoesException;
-import br.com.fiap.mscartaocredito.infra.exception.RegraNegocioException;
-import br.com.fiap.mscartaocredito.model.CartaoCreditoDTO;
-import br.com.fiap.mscartaocredito.service.CartaoCreditoService;
+import br.com.fiap.infra.exception.LimiteCartoesException;
+import br.com.fiap.infra.exception.RegraNegocioException;
+import br.com.fiap.model.CartaoCreditoDTO;
+import br.com.fiap.service.CartaoCreditoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,5 +39,7 @@ public class CartaoCreditoController {
             return new ResponseEntity<>("Erro de autorização.", HttpStatus.UNAUTHORIZED);
         }
     }
+
+    //TODO: fazer metodo obterCartaoPorCpf() retorna List<CartaoCredito>
 
 }
