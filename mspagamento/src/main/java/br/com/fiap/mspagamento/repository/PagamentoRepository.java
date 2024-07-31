@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PagamentoRepository extends JpaRepository<Pagamento, Integer> {
 
-
+    Optional<Pagamento[]> findByCpf(String cpf);
     Optional<Pagamento> findFirstByCpf(String cpf);
 }
