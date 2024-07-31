@@ -2,7 +2,6 @@ package br.com.fiap.mspagamento.service;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -85,36 +84,75 @@ public class PagamentoService {
         }
     }
 
-    /*public double exibirValorTotalCarrinho (Integer carrinhoComprasId){
-
+    public boolean verificarNumeroCartao (String cpf, String numero){
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", securityFilter.getTokenBruto());
 
-        URI uri = UriComponentsBuilder.fromUriString("http://mscarrinhocompras:8083/api/carrinhos/{carrinhoComprasId}")
-                .buildAndExpand(carrinhoComprasId)
+        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/{cpf}")
+                .buildAndExpand(cpf)
                 .toUri();
 
+
         RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
-
-        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-
-
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            try {
-                JsonNode produtoJson = objectMapper.readTree(response.getBody());
-                double valorTotal = produtoJson.get("valorTotal").asDouble();
-                return valorTotal;
-            } catch (IOException e) {
-                throw new RuntimeException("Erro no metodo verificarDisponibilidadeProdutos");
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+            JsonNode cartoesCredito = objectMapper.readTree(response.getBody());
+            for (JsonNode cartaoCredito : cartoesCredito){
+                if (numero.equals(cartaoCredito.get("numero").asText())){
+                    return true;
+                }
             }
-        }else{
-            throw new RuntimeException("Erro no metodo verificarDisponibilidadeProdutos");
+        } catch (HttpServerErrorException e) {
+            throw new NoSuchElementException("Cartão de crédito não encontrado");
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Cartão de crédito não encontrado");
+        } catch(IOException e) {
+            throw new RuntimeException("Erro no método verificar número do cartão");
         }
-    }*/
+        return false;
+    }
+
+    public boolean verificarValidadeCartao (String numero){
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Authorization", securityFilter.getTokenBruto());
+
+        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/{numero}")
+                .buildAndExpand(numero)
+                .toUri();
+
+
+        RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+            JsonNode cartaoCredito = objectMapper.readTree(response.getBody());
+
+            Object dataValidadeCartao = cartaoCredito.get("dataValidade").asText();
+            if (dataValidadeCartao instanceof Date){
+                Date dataValidade = (Date) dataValidadeCartao;
+                if (dataValidade.before(new Date())){
+                    return true;
+                }
+            }
+        } catch (HttpServerErrorException e) {
+            throw new NoSuchElementException("Cartão de crédito não encontrado");
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Cartão de crédito não encontrado");
+        } catch(IOException e) {
+            throw new RuntimeException("Erro no método verificar número do cartão");
+        }
+        return false;
+    }
+
+    public boolean verificarCvv (String numero){
+        return true;
+    }
+
+
 
     public PagamentoDTO realizarPagamento (String cpf, String numero, Date dataValidade, String cvv, Double valor){
         obterLimiteCartaoCredito(cpf);
+        verificarNumeroCartao(cpf, numero);
+        verificarValidadeCartao(numero);
 
 
 
