@@ -1,6 +1,6 @@
-package br.com.fiap.mscartaocredito.repository;
+package br.com.fiap.repository;
 
-import br.com.fiap.mscartaocredito.model.CartaoCredito;
+import br.com.fiap.model.CartaoCredito;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

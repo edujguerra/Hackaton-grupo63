@@ -1,10 +1,10 @@
-package br.com.fiap.mscartaocredito.service;
+package br.com.fiap.service;
 
-import br.com.fiap.mscartaocredito.infra.exception.LimiteCartoesException;
-import br.com.fiap.mscartaocredito.infra.security.SecurityFilter;
-import br.com.fiap.mscartaocredito.model.CartaoCredito;
-import br.com.fiap.mscartaocredito.model.CartaoCreditoDTO;
-import br.com.fiap.mscartaocredito.repository.CartaoCreditoRepository;
+import br.com.fiap.infra.exception.LimiteCartoesException;
+import br.com.fiap.infra.security.SecurityFilter;
+import br.com.fiap.model.CartaoCredito;
+import br.com.fiap.model.CartaoCreditoDTO;
+import br.com.fiap.repository.CartaoCreditoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

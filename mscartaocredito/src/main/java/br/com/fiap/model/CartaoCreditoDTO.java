@@ -1,4 +1,4 @@
-package br.com.fiap.mscartaocredito.model;
+package br.com.fiap.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

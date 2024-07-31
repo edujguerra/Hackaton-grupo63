@@ -1,4 +1,4 @@
-package br.com.fiap.mscartaocredito.infra.exception;
+package br.com.fiap.infra.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;

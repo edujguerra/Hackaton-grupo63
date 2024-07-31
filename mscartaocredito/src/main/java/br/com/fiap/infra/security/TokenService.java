@@ -1,4 +1,4 @@
-package br.com.fiap.mscartaocredito.infra.security;
+package br.com.fiap.infra.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -17,7 +17,7 @@ public class TokenService {
         try {
             var algoritmo = Algorithm.HMAC256(Base64.getDecoder().decode(secret));
             return JWT.require(algoritmo)
-                    .withIssuer("API Comercio")
+                    .withIssuer("API Hackaton")
                     .build()
                     .verify(tokenJWT)
                     .getSubject();
@@ -31,7 +31,7 @@ public class TokenService {
         try {
             var algoritmo = Algorithm.HMAC256(Base64.getDecoder().decode(secret));
             return JWT.require(algoritmo)
-                    .withIssuer("API Comercio")
+                    .withIssuer("API Hackaton")
                     .build()
                     .verify(tokenJWT)
                     .getClaims().toString();

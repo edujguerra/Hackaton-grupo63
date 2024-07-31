@@ -81,7 +81,7 @@ services:
     ports:
       - '8082:8082'
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://dbcartaocredito:3306/clientes?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://dbcartaocredito:3306/cartaocredito?useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: password
     depends_on:

@@ -2,8 +2,8 @@ server:
   port: 8082
 spring:
   datasource:
-    url: jdbc:mysql://dbcartaocredito:3306/cartoes?useSSL=false&serverTimezone=UTC
-#    url: jdbc:mysql://127.0.0.1:3307/cartoes
+#    url: jdbc:mysql://dbcartaocredito:3306/cartaocredito?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3307/cartaocredito
     username: root
     password: password
   jpa:

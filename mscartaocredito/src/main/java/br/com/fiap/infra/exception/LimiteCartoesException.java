@@ -1,4 +1,4 @@
-package br.com.fiap.mscartaocredito.infra.exception;
+package br.com.fiap.infra.exception;
 
 public class LimiteCartoesException extends RuntimeException {
 
