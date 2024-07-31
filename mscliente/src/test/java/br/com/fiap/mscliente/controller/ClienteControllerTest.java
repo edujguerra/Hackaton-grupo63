@@ -1,5 +1,6 @@
 package br.com.fiap.mscliente.controller;
 
+import br.com.fiap.mscliente.infra.security.TokenService;
 import br.com.fiap.mscliente.model.Cliente;
 import br.com.fiap.mscliente.service.ClienteService;
 import br.com.fiap.mscliente.utils.ClienteHelper;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -17,8 +18,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -46,6 +45,8 @@ public class ClienteControllerTest {
         mock.close();
     }
 
+    @MockBean
+    private TokenService tokenService;
 
     @Test
     void RegistrarCliente() throws Exception {
@@ -63,14 +64,15 @@ public class ClienteControllerTest {
 
     @Test
     void ListarUmCliente() throws Exception {
-        Integer id = 301;
+        Integer id = 1;
         Cliente cliente = ClienteHelper.gerarCliente();
         cliente.setId(id);
 
-        mockMvc.perform(get("/api/cliente/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        ResultActions result = mockMvc.perform(get("/api/cliente/{id}",id)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
 
+        result.andExpect(status().isOk());
         verify(clienteService, times(1)).buscarUm(any(Integer.class));
     }
 }

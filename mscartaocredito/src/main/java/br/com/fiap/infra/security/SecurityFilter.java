@@ -1,4 +1,4 @@
-package br.com.fiap.mscliente.infra.security;
+package br.com.fiap.infra.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,13 +19,19 @@ import java.util.List;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
+    private String tokenBruto = "";
     @Autowired
     private TokenService tokenService;
+
+    public String getTokenBruto() {
+        return tokenBruto;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             var tokenJWT = recuperarToken(request);
+            this.tokenBruto = tokenJWT;
 
             if (tokenJWT != null) {
                 var subject = tokenService.getSubject(tokenJWT);

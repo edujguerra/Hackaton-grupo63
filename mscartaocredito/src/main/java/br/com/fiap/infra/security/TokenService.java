@@ -1,10 +1,8 @@
-package br.com.fiap.mscliente.infra.security;
+package br.com.fiap.infra.security;
 
-import br.com.fiap.mscliente.infra.exception.UnauthorizedException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
@@ -25,7 +23,7 @@ public class TokenService {
                     .getSubject();
 
         } catch (JWTVerificationException exception) {
-            throw new BadCredentialsException("Token JWT inválido ou expirado!" );
+            throw new RuntimeException("Token JWT inválido ou expirado! " + exception.getMessage());
         }
     }
 
@@ -39,7 +37,8 @@ public class TokenService {
                     .getClaims().toString();
 
         } catch (JWTVerificationException exception) {
-            throw new UnauthorizedException("Token JWT inválido ou expirado!" );
+            throw new RuntimeException("Token JWT inválido ou expirado! " + exception.getMessage());
         }
     }
 }
+

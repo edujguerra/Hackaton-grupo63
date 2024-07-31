@@ -1,11 +1,8 @@
 package br.com.fiap.mscliente.service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
+import br.com.fiap.mscliente.infra.exception.UnauthorizedException;
 import br.com.fiap.mscliente.model.CepResponse;
 import br.com.fiap.mscliente.model.Cliente;
-import br.com.fiap.mslogin.exception.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,11 +31,11 @@ public class ClienteService {
             }
 
             cliente = clienteRepository.save(cliente);
-            //return ResponseEntity.ok("Id_Cliente : " + cliente.getId());
+
             return ResponseEntity.ok(cliente);
 
         } catch (BadCredentialsException e) {
-            throw new UnauthorizedException(401, "Usuário e/ou senha inválido(s).");
+            throw new UnauthorizedException( "Usuário e/ou senha inválido(s).");
         }
     }
 
@@ -70,6 +67,11 @@ public class ClienteService {
             RestTemplate restTemplate = new RestTemplate();
 
             CepResponse cepResponse = restTemplate.getForEntity(uriCep, CepResponse.class).getBody();
+            if (cepResponse.getCep() == null ||
+                    cepResponse.getCep().isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cep não encontrado. ");
+            }
+
             if (cliente.getRua() == null ||
                     cliente.getRua().isEmpty()) {
                 cliente.setRua(cepResponse.getLogradouro());

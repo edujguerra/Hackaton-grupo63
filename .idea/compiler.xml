@@ -14,6 +14,7 @@
         <module name="mspagamento" />
         <module name="mscliente" />
         <module name="mslogin" />
+        <module name="mscartaocredito" />
         <module name="msproduto" />
       </profile>
     </annotationProcessing>
@@ -25,6 +26,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="msbatch" options="-parameters" />
       <module name="mscarrinhocompras" options="-parameters" />
+      <module name="mscartaocredito" options="-parameters" />
       <module name="mscliente" options="-parameters" />
       <module name="mslogin" options="-parameters" />
       <module name="mspagamento" options="-parameters" />

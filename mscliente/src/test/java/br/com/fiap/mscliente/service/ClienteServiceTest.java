@@ -55,14 +55,14 @@ class ClienteServiceTest {
                 .thenAnswer(i -> i.getArgument(0));
 
         // Act
-        Cliente clienteArmazenado = (Cliente) clienteService.salvar(cliente).getBody();
+        Cliente response = (Cliente) clienteService.salvar(cliente).getBody();
 
         // Assert
-        assertThat(clienteArmazenado)
+        assertThat(response)
                 .isInstanceOf(Cliente.class)
                 .isNotNull()
                 .isEqualTo(cliente);
-        assertThat(clienteArmazenado.getNome())
+        assertThat(response.getNome())
                 .isEqualTo(cliente.getNome());
     }
 
