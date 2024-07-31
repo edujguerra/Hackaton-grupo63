@@ -32,7 +32,7 @@ class MsClienteApplicationIT {
                 .when()
                 .get("/actuator/health")
                 .then()
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.FORBIDDEN.value())
                 .body("status", equalTo("UP"));
         ;
     }

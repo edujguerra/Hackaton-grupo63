@@ -31,7 +31,7 @@ public class ClienteService {
             }
 
             cliente = clienteRepository.save(cliente);
-            //return ResponseEntity.ok("Id_Cliente : " + cliente.getId());
+
             return ResponseEntity.ok(cliente);
 
         } catch (BadCredentialsException e) {
