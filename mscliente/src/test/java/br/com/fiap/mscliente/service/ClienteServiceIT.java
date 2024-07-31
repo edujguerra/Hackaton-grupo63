@@ -53,12 +53,7 @@ class ClienteServiceIT {
     assertThat(avaliacaoArmazenada)
             .isInstanceOf(ResponseEntity.class)
             .isNotNull();
-//    assertThat(avaliacaoArmazenada.getDataAvaliacao())
-//            .isEqualTo(avaliacao.getDataAvaliacao());
-//    assertThat(avaliacaoArmazenada.getId())
-//            .isNotNull();
-//    assertThat(avaliacaoArmazenada.getCliente())
-//            .isEqualTo(avaliacao.getCliente());
+
     verify(avaliacaoRepository, times(1)).save(avaliacao);
   }
 

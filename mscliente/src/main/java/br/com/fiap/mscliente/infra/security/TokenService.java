@@ -39,7 +39,7 @@ public class TokenService {
                     .getClaims().toString();
 
         } catch (JWTVerificationException exception) {
-            throw new UnauthorizedException(401,"Token JWT inválido ou expirado!" );
+            throw new UnauthorizedException("Token JWT inválido ou expirado!" );
         }
     }
 }

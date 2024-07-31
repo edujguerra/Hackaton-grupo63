@@ -23,7 +23,7 @@ public class ClienteController {
         try {
             return service.salvar(cliente);
         } catch (BadCredentialsException e) {
-            throw new UnauthorizedException(401, "Usuário e/ou senha inválido(s).");
+            throw new UnauthorizedException("Usuário e/ou senha inválido(s).");
         }
     }
 

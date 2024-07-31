@@ -35,7 +35,7 @@ public class ClienteService {
             return ResponseEntity.ok(cliente);
 
         } catch (BadCredentialsException e) {
-            throw new UnauthorizedException(401, "Usuário e/ou senha inválido(s).");
+            throw new UnauthorizedException( "Usuário e/ou senha inválido(s).");
         }
     }
 
