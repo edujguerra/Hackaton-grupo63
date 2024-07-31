@@ -24,17 +24,17 @@ import static org.mockito.Mockito.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ClienteServiceIT {
   @Mock
-  private ClienteRepository avaliacaoRepository;
+  private ClienteRepository clienteRepository;
 
   @Autowired
-  private ClienteService avaliacaoService;
+  private ClienteService clienteService;
 
   AutoCloseable openMocks;
 
   @BeforeEach
   void setUp() {
     openMocks = MockitoAnnotations.openMocks(this);
-    avaliacaoService = new ClienteService(avaliacaoRepository);
+    clienteService = new ClienteService(clienteRepository);
   }
 
   @AfterEach
@@ -43,20 +43,18 @@ class ClienteServiceIT {
   }
 
   @Test
-  void devePermitirRegistrarAvaliacao() {
-    var avaliacao = ClienteHelper.gerarCliente();
-    when(avaliacaoRepository.save(any(Cliente.class)))
+  void devePermitirRegistrarCliente() {
+    var cliente = ClienteHelper.gerarCliente();
+    when(clienteRepository.save(any(Cliente.class)))
             .thenAnswer(i -> i.getArgument(0));
 
-    var avaliacaoArmazenada = avaliacaoService.salvar(avaliacao);
+    var avaliacaoArmazenada = clienteService.salvar(cliente);
 
     assertThat(avaliacaoArmazenada)
             .isInstanceOf(ResponseEntity.class)
             .isNotNull();
 
-    verify(avaliacaoRepository, times(1)).save(avaliacao);
+    verify(clienteRepository, times(1)).save(cliente);
   }
-
-
 
 }
