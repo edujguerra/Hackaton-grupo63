@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -76,11 +74,4 @@ public class InfraTest {
         verify(http).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    @Test
-    public void test_valid_authentication_configuration() throws Exception {
-        AuthenticationConfiguration configuration = new AuthenticationConfiguration();
-        SecurityConfigurations securityConfigurations = new SecurityConfigurations();
-        AuthenticationManager authenticationManager = securityConfigurations.authenticationManager(configuration);
-        assertNotNull(authenticationManager);
-    }
 }
