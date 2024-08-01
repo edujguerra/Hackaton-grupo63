@@ -26,6 +26,9 @@ public class CartaoCreditoController {
     @Autowired
     CartaoCreditoService cartaoCreditoService;
 
+    public CartaoCreditoController(CartaoCreditoService cartaoCreditoService) {
+    }
+
     @PostMapping
     public ResponseEntity<?> gerarCartaoCredito(@RequestBody CartaoCreditoDTO cartaoCreditoDTO) {
         try {

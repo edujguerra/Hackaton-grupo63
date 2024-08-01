@@ -1,27 +1,28 @@
-package br.com.fiap.mscliente.infra;
+package br.com.fiap.infra;
 
-import br.com.fiap.mscliente.infra.security.SecurityConfigurations;
-import br.com.fiap.mscliente.infra.security.SecurityFilter;
-import br.com.fiap.mscliente.infra.security.TokenService;
+import br.com.fiap.infra.exception.RegraNegocioException;
+import br.com.fiap.infra.security.SecurityConfigurations;
+import br.com.fiap.infra.security.SecurityFilter;
+import br.com.fiap.infra.security.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 public class InfraTest {
 
@@ -77,10 +78,10 @@ public class InfraTest {
     }
 
     @Test
-    public void test_valid_authentication_configuration() throws Exception {
-        AuthenticationConfiguration configuration = new AuthenticationConfiguration();
-        SecurityConfigurations securityConfigurations = new SecurityConfigurations();
-        AuthenticationManager authenticationManager = securityConfigurations.authenticationManager(configuration);
-        assertNotNull(authenticationManager);
+    public void test_exception_with_valid_message() {
+        String message = "Valid message";
+        RegraNegocioException exception = new RegraNegocioException(message);
+        assertEquals(message, exception.getMessage());
     }
+
 }

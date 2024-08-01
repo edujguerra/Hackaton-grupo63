@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
+import static org.junit.Assert.*;
+
 public class CartaoCreditoTest {
 
     @Test
@@ -62,5 +64,20 @@ public class CartaoCreditoTest {
         Assertions.assertThat(cartaoCredito.getNumero()).isEqualTo(numero);
         Assertions.assertThat(cartaoCredito.getData_validade()).isEqualTo(dataValidade);
         Assertions.assertThat(cartaoCredito.getCvv()).isEqualTo(cvv);
+    }
+
+    @Test
+    public void test_equals_same_instance() {
+        CartaoCredito cartao = new CartaoCredito(1L, "12345678901", 5000.0, "1234-5678-9012-3456", new Date(), "123");
+        assertTrue(cartao.equals(cartao));
+    }
+
+    @Test
+    public void test_consistent_hash_for_same_state() {
+        CartaoCredito cartao1 = new CartaoCredito(1L, "12345678901", 5000.0, "1234-5678-9012-3456", new Date(), "123");
+        CartaoCredito cartao2 = new CartaoCredito(1L, "12345678901", 5000.0, "1234-5678-9012-3456", new Date(), "123");
+        int hash1 = cartao1.hashCode();
+        int hash2 = cartao2.hashCode();
+        assertEquals(hash1, hash2);
     }
 }
