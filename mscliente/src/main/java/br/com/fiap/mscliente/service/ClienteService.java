@@ -103,4 +103,14 @@ public class ClienteService {
         }
     }
 
+    public ResponseEntity<Object> buscarPorCPF(String cpf) {
+        Cliente cliente = clienteRepository.findByCpf(cpf);
+
+        if (cliente != null) {
+            return ResponseEntity.ok(cliente);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cliente não encontrado.");
+        }
+    }
+
 }
