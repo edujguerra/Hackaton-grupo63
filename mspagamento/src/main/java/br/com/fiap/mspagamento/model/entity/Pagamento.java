@@ -1,4 +1,4 @@
-package br.com.fiap.mspagamento.model;
+package br.com.fiap.mspagamento.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
+
+import br.com.fiap.mspagamento.model.enums.MetodoPagamento;
+import br.com.fiap.mspagamento.model.enums.StatusPagamento;
 
 @Data
 @NoArgsConstructor
@@ -38,6 +41,18 @@ public class Pagamento {
     @NotBlank(message = "Valor do pagamento não pode ser vazio.")
     @Column(name = "valor", nullable = false)
     private Double valor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusPagamento statusPagamento;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "forma_pagamento", nullable = false)
+    private MetodoPagamento metodoPagamento;
+    
+    @NotBlank(message = "Descricao do pagamento não pode ser vazio.")
+    @Column(name = "descricao", nullable = false)
+    private String descricao;
 
     public Pagamento(@NotBlank(message = "CPF não pode ser vazio.") String cpf,
             @NotBlank(message = "Numero do cartão não pode ser vazio.") String numero,

@@ -1,4 +1,4 @@
-package br.com.fiap.mspagamento.model;
+package br.com.fiap.mspagamento.model.DTO;
 
 import java.util.Date;
 

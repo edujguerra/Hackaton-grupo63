@@ -1,7 +1,9 @@
 package br.com.fiap.mspagamento.service;
 
 import java.io.IOException;
+import java.io.ObjectInputFilter.Status;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -9,12 +11,16 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import br.com.fiap.mspagamento.infra.exception.LimiteException;
 import br.com.fiap.mspagamento.infra.exception.PagamentoDuplicadoException;
 import br.com.fiap.mspagamento.infra.exception.PagamentoException;
 import br.com.fiap.mspagamento.infra.security.SecurityFilter;
-import br.com.fiap.mspagamento.model.CartaoDTO;
-import br.com.fiap.mspagamento.model.Pagamento;
-import br.com.fiap.mspagamento.model.PagamentoDTO;
+import br.com.fiap.mspagamento.model.DTO.CartaoDTO;
+import br.com.fiap.mspagamento.model.DTO.PagamentoDTO;
+import br.com.fiap.mspagamento.model.entity.Pagamento;
+import br.com.fiap.mspagamento.model.enums.MetodoPagamento;
+import br.com.fiap.mspagamento.model.enums.StatusPagamento;
+import br.com.fiap.mspagamento.model.response.PagamentoResponse;
 import br.com.fiap.mspagamento.repository.PagamentoRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,94 +71,6 @@ public class PagamentoService {
         }
     }
 
-    public double obterLimiteCartaoCredito(String cpf){
-
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", securityFilter.getTokenBruto());
-
-        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/{cpf}")
-                .buildAndExpand(cpf)
-                .toUri();
-
-        RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-            JsonNode cartaoCredito = objectMapper.readTree(response.getBody());
-            double limite = cartaoCredito.get("limite").asDouble();
-            return limite;
-        } catch (HttpServerErrorException e) {
-            throw new NoSuchElementException("Cartão de crédito não encontrado");
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Cartão de crédito não encontrado");
-        } catch(IOException e){
-            throw new RuntimeException("Erro no método obter limite do cartão de crédito");
-        }
-    }
-
-    public void verificarNumeroCartao (String cpf, String numero){
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", securityFilter.getTokenBruto());
-
-        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/{cpf}")
-                .buildAndExpand(cpf)
-                .toUri();
-
-
-        RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-            JsonNode cartoesCredito = objectMapper.readTree(response.getBody());
-            for (JsonNode cartaoCredito : cartoesCredito){
-                //todo reverter
-                if (!numero.equals(cartaoCredito.get("numero").asText())){
-                    throw new PagamentoException("Há um problema com o numero de cartão informado.");
-                }
-            }
-        } catch (HttpServerErrorException e) {
-            throw new NoSuchElementException("Cartão de crédito não encontrado");
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Cartão de crédito não encontrado");
-        } catch(IOException e) {
-            throw new RuntimeException("Erro no método verificar número do cartão");
-        }
-    }
-
-    public void verificarValidadeCartao (String numero){
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", securityFilter.getTokenBruto());
-
-        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/{numero}")
-                .buildAndExpand(numero)
-                .toUri();
-
-
-        RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-            JsonNode cartaoCredito = objectMapper.readTree(response.getBody());
-
-            Object dataValidadeCartao = cartaoCredito.get("dataValidade").asText();
-            if (dataValidadeCartao instanceof Date){
-                Date dataValidade = (Date) dataValidadeCartao;
-                if (!dataValidade.before(new Date())){
-                    throw new PagamentoException("Validade do cartao excedida.");
-                }
-            }
-        } catch (HttpServerErrorException e) {
-            throw new NoSuchElementException("Cartão de crédito não encontrado");
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Cartão de crédito não encontrado");
-        } catch(IOException e) {
-            throw new RuntimeException("Erro no método verificar número do cartão");
-        }
-    }
-
-    public boolean verificarCvv (String numero){
-        return true;
-    }
-
-
-
     public Pagamento realizarPagamento (Pagamento pagamento){
 
         Pagamento meuPagamento = pagamentoRepository.findFirstByCpf(pagamento.getCpf()).orElse(null);
@@ -163,19 +81,9 @@ public class PagamentoService {
         }
 
         validacaoCartao(pagamento);
-
+        pagamento.setStatusPagamento(StatusPagamento.A);
         return pagamentoRepository.save(pagamento);
-    }
 
-    public Pagamento toPagamento (PagamentoDTO pagamentoDTO) {
-        return new Pagamento(
-                pagamentoDTO.getId(),
-                pagamentoDTO.getCpf(),
-                pagamentoDTO.getNumero(),
-                pagamentoDTO.getData_validade(),
-                pagamentoDTO.getCvv(),
-                pagamentoDTO.getValor()
-        );
     }
 
     public void validacaoCartao(Pagamento pagamento){
@@ -188,9 +96,6 @@ public class PagamentoService {
         if (cartao == null) {
             throw new PagamentoException("Há um problema com o numero de cartão informado.");
         }
-        if (cartao.getLimite() < pagamento.getValor()) {
-            throw new PagamentoException("Limite excedido.");
-        }
         if (cartao.getData_validade() instanceof Date){
             Date dataValidade = (Date) cartao.getData_validade();
             if (!dataValidade.before(new Date())){
@@ -199,6 +104,10 @@ public class PagamentoService {
         }
         if (!cartao.getCvv().equals(pagamento.getCvv())) {
             throw new PagamentoException("Codigo invalido.");
+        }
+
+        if (cartao.getLimite() < pagamento.getValor()) {
+            throw new LimiteException("Limite excedido.");
         }
     }
 
@@ -219,14 +128,27 @@ public class PagamentoService {
 
             return cartoes;
         } catch (HttpServerErrorException e) {
-            throw new NoSuchElementException("Cartão de crédito não encontrado");
+            throw new HttpServerErrorException(e.getStatusCode());
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Cartão de crédito não encontrado");
         }
     }
 
-    public List<Pagamento> obterPagamentosPorCPF(String cpf){
-        return Arrays.asList(pagamentoRepository.findByCpf(cpf).orElseThrow(() -> new RuntimeException("Pagamentos não encontrados")));
+    public List<PagamentoResponse> obterPagamentosPorCPF(String cpf){
+        List<Pagamento> pagamentos = Arrays.asList(pagamentoRepository.findByCpf(cpf).orElseThrow(() -> new PagamentoException("Pagamentos não encontrados")));
+
+        return pagamentos.stream()
+                .map(PagamentoService::toPagamentoResponse)
+                .collect(Collectors.toList());
+    }
+
+    public static PagamentoResponse toPagamentoResponse(Pagamento pagamento){
+        PagamentoResponse pagamentoResponse = new PagamentoResponse();
+        pagamentoResponse.setDescricao(pagamento.getDescricao());
+        pagamentoResponse.setMetodoPagamento(pagamento.getMetodoPagamento());
+        pagamentoResponse.setStatusPagamento(pagamento.getStatusPagamento());
+        pagamentoResponse.setValor(pagamento.getValor());
+        return pagamentoResponse;
     }
 
 }
