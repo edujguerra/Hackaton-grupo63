@@ -38,7 +38,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PagamentoService {
 
     @Autowired
-    private PagamentoRepository pagamentoRepository;
+    PagamentoRepository pagamentoRepository;
 
     @Autowired
     private SecurityFilter securityFilter;

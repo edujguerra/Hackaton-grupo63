@@ -6,3 +6,4 @@
 git commit -m ""
 #git push origin main
 
+#mvn package -DskipTests

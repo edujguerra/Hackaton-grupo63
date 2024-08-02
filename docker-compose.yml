@@ -79,10 +79,10 @@ services:
     ports:
       - '3311:3306'
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: password
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: pagamentos
     volumes:
-      - db_pagamento:/var/lib/mysql
+      - db_pagament:/var/lib/mysql
     networks:
       - minha-rede
 
@@ -110,4 +110,4 @@ volumes:
   db_client:
   db_usuario:
   db_cartaocredito:
-  db_pagamento:
+  db_pagament:
