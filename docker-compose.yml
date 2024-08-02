@@ -73,6 +73,19 @@ services:
     networks:
       - minha-rede
 
+  dbpagamento:
+    container_name: dbpagamento
+    image: mysql:5.7
+    ports:
+      - '3311:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: password
+    volumes:
+      - db_pagamento:/var/lib/mysql
+    networks:
+      - minha-rede
+
   mscartaocredito:
     container_name: mscartaocredito
     build:
@@ -97,3 +110,4 @@ volumes:
   db_client:
   db_usuario:
   db_cartaocredito:
+  db_pagamento:
