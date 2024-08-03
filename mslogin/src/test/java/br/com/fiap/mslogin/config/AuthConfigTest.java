@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AuthConfigTest {
 
     @Test
-    public void test_userDetailsService_bean_instantiation() {
+    public void teste_userDetailsService_bean_instaciacao() {
         AuthConfig authConfig = new AuthConfig();
         UserDetailsService userDetailsService = authConfig.userDetailsService();
         assertNotNull(userDetailsService);

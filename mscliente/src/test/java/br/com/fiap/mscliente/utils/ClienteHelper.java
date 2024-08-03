@@ -12,7 +12,7 @@ public abstract class ClienteHelper {
         cliente.setCep("95020-190");
         cliente.setEmail("email");
         cliente.setPais("pais");
-        cliente.setFone("1234566");
+        cliente.setTelefone("1234566");
 
         return cliente;
     }

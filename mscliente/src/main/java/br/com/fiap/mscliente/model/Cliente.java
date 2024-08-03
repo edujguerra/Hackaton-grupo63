@@ -27,7 +27,7 @@ public class Cliente {
     private String email;
 
     @Column(name = "nr_fone")
-    private String fone;
+    private String telefone;
 
     @Column(name = "ds_enderec")
     private String rua;

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class ControllerExceptionHandlerTest {
 
     @Test
-    public void test_handleUnauthorizedException_returnsCorrectApiErrorResponse() {
+    public void teste_handleUnauthorizedException_returnaErrorResponseCorreto() {
         ControllerExceptionHandler handler = new ControllerExceptionHandler();
         UnauthorizedException exception = new UnauthorizedException(401, "Unauthorized access");
 

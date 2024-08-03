@@ -56,7 +56,7 @@ public class UserControllerTest {
     private TokenService tokenService;
 
     @Test
-    public void test_valid_credentials_return_authenticate_user_with_tokens() {
+    public void test_validar_credenciais_returna_usuario_autenticado() {
         AuthenticationRequest request = new AuthenticationRequest("validUser", "validPassword");
         AuthenticateUser expectedResponse = new AuthenticateUser("token90", "token2min");
 
