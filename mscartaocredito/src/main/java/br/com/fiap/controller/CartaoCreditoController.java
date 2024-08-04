@@ -5,6 +5,7 @@ import br.com.fiap.infra.exception.RegraNegocioException;
 import br.com.fiap.model.CartaoCredito;
 import br.com.fiap.model.CartaoCreditoDTO;
 import br.com.fiap.service.CartaoCreditoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -22,6 +23,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/cartao")
 public class CartaoCreditoController {
 
+    @Autowired
     CartaoCreditoService cartaoCreditoService;
 
     public CartaoCreditoController() {
