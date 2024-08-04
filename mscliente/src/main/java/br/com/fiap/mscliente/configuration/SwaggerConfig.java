@@ -1,4 +1,4 @@
-package br.com.fiap.mscliente;
+package br.com.fiap.mscliente.configuration;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
