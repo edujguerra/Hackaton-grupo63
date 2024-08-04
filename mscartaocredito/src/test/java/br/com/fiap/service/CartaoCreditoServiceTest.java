@@ -17,12 +17,14 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -121,5 +123,45 @@ public class CartaoCreditoServiceTest {
         // Verifica que a exceção lançada é a esperada
         assertThat(thrown).isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("Cliente não encontrado");
+    }
+
+    @Test
+    public void testObterCartoesPorCpf_CartoesEncontrados() {
+        // Dados de teste
+        String cpf = "12345678900";
+        CartaoCredito cartao1 = new CartaoCredito();
+        CartaoCredito cartao2 = new CartaoCredito();
+        List<CartaoCredito> cartoes = new ArrayList<>();
+        cartoes.add(cartao1);
+        cartoes.add(cartao2);
+
+        // Configuração do mock
+        when(cartaoCreditoRepository.findByCpf(cpf)).thenReturn(cartoes);
+
+        // Execução do método a ser testado
+        List<CartaoCredito> resultado = cartaoCreditoService.obterCartoesPorCpf(cpf);
+
+        // Verificação dos resultados
+        assertNotNull(resultado);
+        assertEquals(2, resultado.size());
+        assertTrue(resultado.contains(cartao1));
+        assertTrue(resultado.contains(cartao2));
+    }
+
+    @Test
+    public void testObterCartoesPorCpf_NenhumCartaoEncontrado() {
+        // Dados de teste
+        String cpf = "12345678900";
+        List<CartaoCredito> cartoes = Collections.emptyList();
+
+        // Configuração do mock
+        when(cartaoCreditoRepository.findByCpf(cpf)).thenReturn(cartoes);
+
+        // Execução e verificação do método a ser testado
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            cartaoCreditoService.obterCartoesPorCpf(cpf);
+        });
+
+        assertEquals("Não existem Cartao de Credito cadastrado para CPF solicitado", exception.getMessage());
     }
 }

@@ -1,28 +1,14 @@
-package br.com.fiap.config;
+package br.com.fiap.mscliente;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Configuration
 public class SwaggerConfig {
-
-    @Bean
-    public List<GroupedOpenApi> apis() {
-        return Arrays.asList(
-                GroupedOpenApi.builder()
-                        .group("cartaocredito_api")
-                        .pathsToMatch("/cartao/**")
-                        .build()
-        );
-    }
 
     @Bean
     public OpenAPI customOpenAPI() {
