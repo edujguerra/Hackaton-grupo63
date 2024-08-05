@@ -73,7 +73,7 @@ public class PagamentoService {
         }
     }
 
-    public RegistrarPagamentoResponse realizarPagamento (Pagamento pagamento){
+    public Pagamento realizarPagamento (Pagamento pagamento){
 
         Pagamento meuPagamento = pagamentoRepository.findFirstByCpf(pagamento.getCpf()).orElse(null);
         //todo validar se a forma de verificar pagamento em duplicidade esta correto
@@ -85,11 +85,11 @@ public class PagamentoService {
         validacaoCartao(pagamento);
         pagamento.setStatusPagamento(StatusPagamento.A);
 
-        pagamento = pagamentoRepository.save(pagamento);
+        return pagamentoRepository.save(pagamento);
 
-        RegistrarPagamentoResponse pagamentoResponse = toRegistrarPagamentoResponse(pagamento);
+//        RegistrarPagamentoResponse pagamentoResponse = toRegistrarPagamentoResponse(pagamento);
 
-        return pagamentoResponse;
+//        return pagamentoResponse;
 
     }
 
@@ -123,8 +123,8 @@ public class PagamentoService {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", securityFilter.getTokenBruto());
 
-//        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/cpf/{cpf}")
-        URI uri = UriComponentsBuilder.fromUriString("http://localhost:8082/api/cartao/cpf/{cpf}")
+        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/cpf/{cpf}")
+//        URI uri = UriComponentsBuilder.fromUriString("http://localhost:8082/api/cartao/cpf/{cpf}")
                 .buildAndExpand(cpf)
                 .toUri();
 

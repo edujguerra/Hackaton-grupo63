@@ -36,8 +36,8 @@ public class PagamentoController {
     public ResponseEntity<?> registrarPagamento (@Valid @RequestBody Pagamento pagamento) {
         try{
             //todo gerar uma chave de pegamento unica e nao um sequencial como ID, algo unico como um UUID
-            RegistrarPagamentoResponse novoPagamento = pagamentoService.realizarPagamento(pagamento);
-            return new ResponseEntity<>(novoPagamento, HttpStatus.OK);
+            Pagamento novoPagamento = pagamentoService.realizarPagamento(pagamento);
+            return new ResponseEntity<>("chave_pagamento:" + novoPagamento.getId(), HttpStatus.OK);
         } catch(PagamentoException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch(LimiteException e) {

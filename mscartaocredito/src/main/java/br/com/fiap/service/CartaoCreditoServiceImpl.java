@@ -105,8 +105,8 @@ public class CartaoCreditoServiceImpl implements CartaoCreditoService{
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", securityFilter.getTokenBruto());
 
-//        URI uri = UriComponentsBuilder.fromUriString("http://msclientes:8081/api/cliente/cpf/{cpf}")
-        URI uri = UriComponentsBuilder.fromUriString("http://127.0.0.1:8081/api/cliente/cpf/{cpf}")
+        URI uri = UriComponentsBuilder.fromUriString("http://msclientes:8081/api/cliente/cpf/{cpf}")
+//        URI uri = UriComponentsBuilder.fromUriString("http://127.0.0.1:8081/api/cliente/cpf/{cpf}")
                 .buildAndExpand(cpf)
                 .toUri();
 
