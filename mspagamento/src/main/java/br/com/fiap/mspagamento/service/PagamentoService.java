@@ -22,6 +22,8 @@ import br.com.fiap.mspagamento.model.enums.MetodoPagamento;
 import br.com.fiap.mspagamento.model.enums.StatusPagamento;
 import br.com.fiap.mspagamento.model.response.PagamentoResponse;
 import br.com.fiap.mspagamento.repository.PagamentoRepository;
+import lombok.NoArgsConstructor;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 
 @Service
+@NoArgsConstructor
 public class PagamentoService {
 
     @Autowired
@@ -111,7 +114,7 @@ public class PagamentoService {
         }
     }
 
-    private List<CartaoDTO> obterCartoes(String cpf) {
+    List<CartaoDTO> obterCartoes(String cpf) {
        
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", securityFilter.getTokenBruto());

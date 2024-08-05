@@ -27,6 +27,10 @@ public class PagamentoController {
         this.pagamentoService = pagamentoService;
     }
 
+    public PagamentoController() {
+        //TODO Auto-generated constructor stub
+    }
+
     @PostMapping
     public ResponseEntity<?> registrarPagamento (@Valid @RequestBody Pagamento pagamento) {
         try{
