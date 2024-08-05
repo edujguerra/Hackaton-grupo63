@@ -1,5 +1,6 @@
 package br.com.fiap.mscliente.infra.security;
 
+import br.com.fiap.mscliente.infra.exception.UnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,14 +30,12 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             if (tokenJWT != null) {
                 var subject = tokenService.getSubject(tokenJWT);
-                var clains = tokenService.getClains(tokenJWT);
-
-                System.out.println(subject);
-                System.out.println(clains);
 
                 var authentication = new UsernamePasswordAuthenticationToken(subject, null, AUTHORITIES);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                throw new UnauthorizedException("Token JWT inválido ou expirado!" );
             }
             filterChain.doFilter(request, response);
         } catch (Exception ex) {

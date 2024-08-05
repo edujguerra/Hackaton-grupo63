@@ -10,14 +10,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -74,5 +76,36 @@ public class ClienteControllerTest {
 
         result.andExpect(status().isOk());
         verify(clienteService, times(1)).buscarUm(any(Integer.class));
+    }
+
+    @Test
+    public void test_returns_200_ok_for_valid_id() {
+        ClienteService service = mock(ClienteService.class);
+        ClienteController controller = new ClienteController(service);
+        Cliente cliente = new Cliente();
+        cliente.setId(1);
+        when(service.buscarUm(1)).thenReturn(ResponseEntity.ok(cliente));
+
+        ResponseEntity<Object> response = controller.buscarUm(1);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(cliente, response.getBody());
+    }
+
+    @Test
+    public void test_valid_cpf_returns_client_data() {
+        ClienteService service = mock(ClienteService.class);
+        ClienteController controller = new ClienteController(service);
+        String validCpf = "12345678901";
+        Cliente cliente = new Cliente();
+        cliente.setCpf(validCpf);
+        ResponseEntity<Object> expectedResponse = ResponseEntity.ok(cliente);
+
+        when(service.buscarPorCPF(validCpf)).thenReturn(expectedResponse);
+
+        ResponseEntity<Object> response = controller.buscarPorCPF(validCpf);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(cliente, response.getBody());
     }
 }

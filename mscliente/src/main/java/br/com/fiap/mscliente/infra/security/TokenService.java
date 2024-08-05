@@ -1,6 +1,5 @@
 package br.com.fiap.mscliente.infra.security;
 
-import br.com.fiap.mscliente.infra.exception.UnauthorizedException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -26,20 +25,6 @@ public class TokenService {
 
         } catch (JWTVerificationException exception) {
             throw new BadCredentialsException("Token JWT inválido ou expirado!" );
-        }
-    }
-
-    public String getClains(String tokenJWT) {
-        try {
-            var algoritmo = Algorithm.HMAC256(Base64.getDecoder().decode(secret));
-            return JWT.require(algoritmo)
-                    .withIssuer("API Hackaton")
-                    .build()
-                    .verify(tokenJWT)
-                    .getClaims().toString();
-
-        } catch (JWTVerificationException exception) {
-            throw new UnauthorizedException("Token JWT inválido ou expirado!" );
         }
     }
 }

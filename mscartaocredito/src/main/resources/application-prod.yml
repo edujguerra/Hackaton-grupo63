@@ -3,7 +3,6 @@ server:
 spring:
   datasource:
     url: jdbc:mysql://dbcartaocredito:3306/cartoes?useSSL=false&serverTimezone=UTC
-#    url: jdbc:mysql://127.0.0.1:3307/cartoes
     username: root
     password: password
   jpa:

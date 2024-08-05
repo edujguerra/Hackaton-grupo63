@@ -35,10 +35,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             if (tokenJWT != null) {
                 var subject = tokenService.getSubject(tokenJWT);
-                var clains = tokenService.getClains(tokenJWT);
-
-                System.out.println(subject);
-                System.out.println(clains);
 
                 var authentication = new UsernamePasswordAuthenticationToken(subject, null, AUTHORITIES);
 

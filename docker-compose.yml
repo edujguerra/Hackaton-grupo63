@@ -15,6 +15,19 @@ services:
     networks:
       - minha-rede
 
+  dbcartaocredito:
+    container_name: dbcartaocredito
+    image: mysql:5.7
+    ports:
+      - '3307:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: cartaocredito
+    volumes:
+      - db_cartaocredito:/var/lib/mysql
+    networks:
+      - minha-rede
+
   msclientes:
     container_name: msclientes
     build:
@@ -60,19 +73,6 @@ services:
     networks:
       - minha-rede
 
-  dbcartaocredito:
-    container_name: dbcartaocredito
-    image: mysql:5.7
-    ports:
-      - '3307:3306'
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: cartaocredito
-    volumes:
-      - db_cartaocredito:/var/lib/mysql
-    networks:
-      - minha-rede
-
   dbpagamento:
     container_name: dbpagamento
     image: mysql:5.7
@@ -102,6 +102,21 @@ services:
     networks:
       - minha-rede
 
+  mspagamento:
+    container_name: mspagamento
+    build:
+      context: /mspagamento
+      dockerfile: Dockerfile
+    ports:
+      - '8089:8089'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://dbpagamento:3306/pagamentos?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - dbpagamento
+    networks:
+      - minha-rede
 networks:
   minha-rede:
     driver: bridge
