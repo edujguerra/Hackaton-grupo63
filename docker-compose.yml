@@ -82,7 +82,7 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: pagamentos
     volumes:
-      - db_pagament:/var/lib/mysql
+      - db_pagamento:/var/lib/mysql
     networks:
       - minha-rede
 

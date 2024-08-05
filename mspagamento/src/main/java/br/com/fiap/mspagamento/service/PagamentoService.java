@@ -16,11 +16,10 @@ import br.com.fiap.mspagamento.infra.exception.PagamentoDuplicadoException;
 import br.com.fiap.mspagamento.infra.exception.PagamentoException;
 import br.com.fiap.mspagamento.infra.security.SecurityFilter;
 import br.com.fiap.mspagamento.model.DTO.CartaoDTO;
-import br.com.fiap.mspagamento.model.DTO.PagamentoDTO;
 import br.com.fiap.mspagamento.model.entity.Pagamento;
-import br.com.fiap.mspagamento.model.enums.MetodoPagamento;
 import br.com.fiap.mspagamento.model.enums.StatusPagamento;
 import br.com.fiap.mspagamento.model.response.PagamentoResponse;
+import br.com.fiap.mspagamento.model.response.RegistrarPagamentoResponse;
 import br.com.fiap.mspagamento.repository.PagamentoRepository;
 import lombok.NoArgsConstructor;
 
@@ -74,7 +73,7 @@ public class PagamentoService {
         }
     }
 
-    public Pagamento realizarPagamento (Pagamento pagamento){
+    public RegistrarPagamentoResponse realizarPagamento (Pagamento pagamento){
 
         Pagamento meuPagamento = pagamentoRepository.findFirstByCpf(pagamento.getCpf()).orElse(null);
         //todo validar se a forma de verificar pagamento em duplicidade esta correto
@@ -85,7 +84,12 @@ public class PagamentoService {
 
         validacaoCartao(pagamento);
         pagamento.setStatusPagamento(StatusPagamento.A);
-        return pagamentoRepository.save(pagamento);
+
+        pagamento = pagamentoRepository.save(pagamento);
+
+        RegistrarPagamentoResponse pagamentoResponse = toRegistrarPagamentoResponse(pagamento);
+
+        return pagamentoResponse;
 
     }
 
@@ -119,7 +123,8 @@ public class PagamentoService {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", securityFilter.getTokenBruto());
 
-        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/cpf/{cpf}")
+//        URI uri = UriComponentsBuilder.fromUriString("http://mscartaocredito:8082/api/cartao/cpf/{cpf}")
+        URI uri = UriComponentsBuilder.fromUriString("http://localhost:8082/api/cartao/cpf/{cpf}")
                 .buildAndExpand(cpf)
                 .toUri();
 
@@ -151,6 +156,18 @@ public class PagamentoService {
         pagamentoResponse.setMetodoPagamento(pagamento.getMetodoPagamento());
         pagamentoResponse.setStatusPagamento(pagamento.getStatusPagamento());
         pagamentoResponse.setValor(pagamento.getValor());
+        return pagamentoResponse;
+    }
+
+    public static RegistrarPagamentoResponse toRegistrarPagamentoResponse(Pagamento pagamento) {
+        RegistrarPagamentoResponse pagamentoResponse = new RegistrarPagamentoResponse();
+
+        pagamentoResponse.setCpf(pagamento.getCpf());
+        pagamentoResponse.setNumero(pagamento.getNumero());
+        pagamentoResponse.setData_validade(pagamento.getData_validade());
+        pagamentoResponse.setCvv(pagamento.getCvv());
+        pagamentoResponse.setValor(pagamento.getValor());
+
         return pagamentoResponse;
     }
 

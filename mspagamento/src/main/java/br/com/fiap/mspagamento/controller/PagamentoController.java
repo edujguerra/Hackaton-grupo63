@@ -4,6 +4,7 @@ import br.com.fiap.mspagamento.infra.exception.LimiteException;
 import br.com.fiap.mspagamento.infra.exception.PagamentoDuplicadoException;
 import br.com.fiap.mspagamento.infra.exception.PagamentoException;
 import br.com.fiap.mspagamento.model.entity.Pagamento;
+import br.com.fiap.mspagamento.model.response.RegistrarPagamentoResponse;
 import br.com.fiap.mspagamento.service.PagamentoService;
 import jakarta.validation.Valid;
 
@@ -35,8 +36,8 @@ public class PagamentoController {
     public ResponseEntity<?> registrarPagamento (@Valid @RequestBody Pagamento pagamento) {
         try{
             //todo gerar uma chave de pegamento unica e nao um sequencial como ID, algo unico como um UUID
-            Pagamento novoPagamento = pagamentoService.realizarPagamento(pagamento);
-            return new ResponseEntity<>("chave_pagamento:"+novoPagamento.getId(), HttpStatus.OK);
+            RegistrarPagamentoResponse novoPagamento = pagamentoService.realizarPagamento(pagamento);
+            return new ResponseEntity<>(novoPagamento, HttpStatus.OK);
         } catch(PagamentoException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch(LimiteException e) {

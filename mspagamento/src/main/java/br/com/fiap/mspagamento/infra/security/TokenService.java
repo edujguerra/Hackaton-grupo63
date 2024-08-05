@@ -17,7 +17,7 @@ public class TokenService {
         try {
             var algoritmo = Algorithm.HMAC256(Base64.getDecoder().decode(secret));
             return JWT.require(algoritmo)
-                    .withIssuer("API Comercio")
+                    .withIssuer("API Hackaton")
                     .build()
                     .verify(tokenJWT)
                     .getSubject();
@@ -31,7 +31,7 @@ public class TokenService {
         try {
             var algoritmo = Algorithm.HMAC256(Base64.getDecoder().decode(secret));
             return JWT.require(algoritmo)
-                    .withIssuer("API Comercio")
+                    .withIssuer("API Hackaton")
                     .build()
                     .verify(tokenJWT)
                     .getClaims().toString();

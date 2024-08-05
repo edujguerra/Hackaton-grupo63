@@ -1,6 +1,8 @@
 package br.com.fiap.mspagamento.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,7 +32,7 @@ public class Pagamento {
     @Column(name = "numero", nullable = false)
     private String numero;
 
-    @NotBlank(message = "Data de validade do cartão não pode ser vazio.")
+    @NotNull(message = "Data de validade do cartão não pode ser nula.")
     @Column(name = "data_validade", nullable = false)
     private Date data_validade;
 
@@ -38,7 +40,8 @@ public class Pagamento {
     @Column(name = "cvv", nullable = false)
     private String cvv;
 
-    @NotBlank(message = "Valor do pagamento não pode ser vazio.")
+    @NotNull(message = "Valor do pagamento não pode ser nulo.")
+    @Positive(message = "O valor deve ser positivo.")
     @Column(name = "valor", nullable = false)
     private Double valor;
 
@@ -49,16 +52,16 @@ public class Pagamento {
     @Enumerated(EnumType.STRING)
     @Column(name = "forma_pagamento", nullable = false)
     private MetodoPagamento metodoPagamento;
-    
-    @NotBlank(message = "Descricao do pagamento não pode ser vazio.")
+
+    @NotBlank(message = "Descrição do pagamento não pode ser vazio.")
     @Column(name = "descricao", nullable = false)
     private String descricao;
 
     public Pagamento(@NotBlank(message = "CPF não pode ser vazio.") String cpf,
             @NotBlank(message = "Numero do cartão não pode ser vazio.") String numero,
-            @NotBlank(message = "Data de validade do cartão não pode ser vazio.") Date data_validade,
+            @NotNull(message = "Data de validade do cartão não pode ser vazio.") Date data_validade,
             @NotBlank(message = "CVV do cartão não pode ser vazio.") String cvv,
-            @NotBlank(message = "Valor do pagamento não pode ser vazio.") Double valor) {
+                     @NotNull(message = "Valor do pagamento não pode ser nulo.") @Positive(message = "O valor deve ser positivo.") Double valor) {
         this.cpf = cpf;
         this.numero = numero;
         this.data_validade = data_validade;
