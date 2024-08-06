@@ -1,6 +1,7 @@
 package br.com.fiap.mspagamento.service;
 
 import br.com.fiap.mspagamento.infra.security.SecurityFilter;
+import br.com.fiap.mspagamento.model.DTO.CartaoDTO;
 import br.com.fiap.mspagamento.model.entity.Pagamento;
 import br.com.fiap.mspagamento.model.enums.MetodoPagamento;
 import br.com.fiap.mspagamento.model.enums.StatusPagamento;
@@ -10,6 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -18,8 +23,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static br.com.fiap.mspagamento.service.PagamentoService.toPagamentoResponse;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ServiceTest {
 
@@ -154,4 +165,91 @@ public class ServiceTest {
         Assertions.assertEquals(1, result.size());
         Assertions.assertEquals("Pagamento Teste", result.get(0).getDescricao());
     }
+
+        @Test
+    public void test_valid_cpf_returns_cartoes() {
+        // Arrange
+        String validCpf = "12345678900";
+        CartaoDTO[] cartaoArray = { new CartaoDTO(1L, validCpf, 5000.0, "1234-5678-9012-3456", new Date(), "123") };
+        List<CartaoDTO> expectedCartoes = Arrays.asList(cartaoArray);
+
+        SecurityFilter securityFilter = mock(SecurityFilter.class);
+        when(securityFilter.getTokenBruto()).thenReturn("Bearer token");
+
+        RestTemplate restTemplate = mock(RestTemplate.class);
+        ResponseEntity<CartaoDTO[]> responseEntity = new ResponseEntity<>(cartaoArray, HttpStatus.OK);
+        when(restTemplate.exchange(any(RequestEntity.class), eq(CartaoDTO[].class))).thenReturn(responseEntity);
+
+        PagamentoService pagamentoService = new PagamentoService();
+        pagamentoService.securityFilter = securityFilter;
+        pagamentoService.restTemplate = restTemplate;
+
+        // Act
+        List<CartaoDTO> actualCartoes = pagamentoService.obterCartoes(validCpf);
+
+        // Assert
+        assertEquals(expectedCartoes, actualCartoes);
+    }
+
+        @Test
+    public void test_server_error_throws_exception() {
+        // Arrange
+        String validCpf = "12345678900";
+
+        SecurityFilter securityFilter = mock(SecurityFilter.class);
+        when(securityFilter.getTokenBruto()).thenReturn("Bearer token");
+
+        RestTemplate restTemplate = mock(RestTemplate.class);
+        when(restTemplate.exchange(any(RequestEntity.class), eq(CartaoDTO[].class)))
+            .thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        PagamentoService pagamentoService = new PagamentoService();
+        pagamentoService.securityFilter = securityFilter;
+        pagamentoService.restTemplate = restTemplate;
+
+        // Act & Assert
+        assertThrows(HttpServerErrorException.class, () -> {
+            pagamentoService.obterCartoes(validCpf);
+        });
+    }
+
+        @Test
+    public void test_valid_card_details_pass_validation() {
+        PagamentoService pagamentoService = new PagamentoService();
+        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456", new Date(System.currentTimeMillis() + 100000000), "123", 100.0);
+        CartaoDTO cartaoDTO = new CartaoDTO(1L, "12345678900", 200.0, "1234567890123456",  new Date(System.currentTimeMillis() + 100000000), "123");
+        List<CartaoDTO> cartoes = Arrays.asList(cartaoDTO);
+
+        PagamentoService pagamentoServiceSpy = Mockito.spy(pagamentoService);
+        Mockito.doReturn(cartoes).when(pagamentoServiceSpy).obterCartoes("12345678900");
+
+        assertDoesNotThrow(() -> pagamentoServiceSpy.validacaoCartao(pagamento));
+    }
+
+    @Test
+    public void test_successful_payment_processing() {
+        PagamentoRepository pagamentoRepository = Mockito.mock(PagamentoRepository.class);
+        PagamentoService pagamentoService = new PagamentoService(pagamentoRepository, null, null, null);
+        String validCpf = "12345678900";
+
+        CartaoDTO[] cartaoArray = { new CartaoDTO(1L, validCpf, 5000.0, "1234567890123456", new Date(System.currentTimeMillis() + 86400000) , "123") };
+        SecurityFilter securityFilter = mock(SecurityFilter.class);
+        when(securityFilter.getTokenBruto()).thenReturn("Bearer token");
+
+        RestTemplate restTemplate = mock(RestTemplate.class);
+        ResponseEntity<CartaoDTO[]> responseEntity = new ResponseEntity<>(cartaoArray, HttpStatus.OK);
+        when(restTemplate.exchange(any(RequestEntity.class), eq(CartaoDTO[].class))).thenReturn(responseEntity);
+        pagamentoService.securityFilter = securityFilter;
+        pagamentoService.restTemplate = restTemplate;
+        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456", new Date(System.currentTimeMillis() + 86400000), "123", 100.0);
+        Mockito.when(pagamentoRepository.findFirstByCpf(pagamento.getCpf())).thenReturn(Optional.empty());
+        Mockito.when(pagamentoRepository.save(pagamento)).thenReturn(pagamento);
+    
+        Pagamento result = pagamentoService.realizarPagamento(pagamento);
+    
+        assertNotNull(result);
+        assertEquals(StatusPagamento.A, result.getStatusPagamento());
+        Mockito.verify(pagamentoRepository).save(pagamento);
+    }
+    
 }

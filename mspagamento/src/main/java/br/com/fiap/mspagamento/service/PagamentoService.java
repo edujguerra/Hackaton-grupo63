@@ -42,11 +42,9 @@ public class PagamentoService {
     @Autowired
     PagamentoRepository pagamentoRepository;
 
-    @Autowired
-    private SecurityFilter securityFilter;
+    @Autowired SecurityFilter securityFilter;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    @Autowired RestTemplate restTemplate;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -105,7 +103,7 @@ public class PagamentoService {
         }
         if (cartao.getData_validade() instanceof Date){
             Date dataValidade = (Date) cartao.getData_validade();
-            if (!dataValidade.before(new Date())){
+            if (dataValidade.before(new Date())){
                 throw new PagamentoException("Validade do cartao excedida.");
             }
         }
@@ -156,18 +154,6 @@ public class PagamentoService {
         pagamentoResponse.setMetodoPagamento(pagamento.getMetodoPagamento());
         pagamentoResponse.setStatusPagamento(pagamento.getStatusPagamento());
         pagamentoResponse.setValor(pagamento.getValor());
-        return pagamentoResponse;
-    }
-
-    public static RegistrarPagamentoResponse toRegistrarPagamentoResponse(Pagamento pagamento) {
-        RegistrarPagamentoResponse pagamentoResponse = new RegistrarPagamentoResponse();
-
-        pagamentoResponse.setCpf(pagamento.getCpf());
-        pagamentoResponse.setNumero(pagamento.getNumero());
-        pagamentoResponse.setData_validade(pagamento.getData_validade());
-        pagamentoResponse.setCvv(pagamento.getCvv());
-        pagamentoResponse.setValor(pagamento.getValor());
-
         return pagamentoResponse;
     }
 
