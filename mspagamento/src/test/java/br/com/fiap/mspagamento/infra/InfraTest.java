@@ -7,6 +7,8 @@ import br.com.fiap.mspagamento.infra.exception.TratadorDeErros;
 import br.com.fiap.mspagamento.infra.security.SecurityConfigurations;
 import br.com.fiap.mspagamento.infra.security.SecurityFilter;
 import br.com.fiap.mspagamento.infra.security.TokenService;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +30,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -149,5 +152,15 @@ public class InfraTest {
         assertFalse(((List<?>) response.getBody()).isEmpty());
     }
 
-    
+    @Test
+    public void test_valid_token_returns_correct_subject() {
+        String secret = "66e48fcca777ed0975ff8a7f51198db678aea9661298bcd34adace1ecefa2cce";
+        TokenService tokenService = new TokenService();
+        String validToken = JWT.create()
+                .withIssuer("API Hackaton")
+                .withSubject("testSubject")
+                .sign(Algorithm.HMAC256(Base64.getDecoder().decode(secret)));
+        String subject = tokenService.getSubject(validToken);
+        assertEquals("testSubject", subject);
+    }
 }
