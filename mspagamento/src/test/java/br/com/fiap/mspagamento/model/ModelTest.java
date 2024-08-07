@@ -1,5 +1,6 @@
 package br.com.fiap.mspagamento.model;
 
+import br.com.fiap.mspagamento.model.DTO.CartaoDTO;
 import br.com.fiap.mspagamento.model.DTO.PagamentoDTO;
 import br.com.fiap.mspagamento.model.response.RegistrarPagamentoResponse;
 import com.auth0.jwt.JWT;
@@ -10,6 +11,7 @@ import java.util.Base64;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ModelTest {
     @Test
@@ -46,5 +48,22 @@ public class ModelTest {
         assertEquals(dataValidade, response.getData_validade());
         assertEquals(cvv, response.getCvv());
         assertEquals(valor, response.getValor());
+    }
+
+    // id is correctly assigned and retrieved
+    @Test
+    public void test_id_is_correctly_assigned_and_retrieved() {
+        CartaoDTO cartao = new CartaoDTO();
+        Long expectedId = 12345L;
+        cartao.setId(expectedId);
+        assertEquals(expectedId, cartao.getId());
+    }
+
+    // id is null
+    @Test
+    public void test_id_is_null() {
+        CartaoDTO cartao = new CartaoDTO();
+        cartao.setId(null);
+        assertNull(cartao.getId());
     }
 }
