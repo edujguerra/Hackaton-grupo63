@@ -21,6 +21,11 @@ public class SecurityConfigurations {
     @Autowired
     private SecurityFilter securityFilter;
 
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    public SecurityConfigurations(CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,7 +38,11 @@ public class SecurityConfigurations {
                                 "/actuator/health",
                                 "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling ->
+                exceptionHandling
+                    .authenticationEntryPoint(customAuthenticationEntryPoint)
+            );
 
         return http.build();
     }

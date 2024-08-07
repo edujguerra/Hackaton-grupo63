@@ -62,7 +62,7 @@ public class InfraTest {
 
     @Test
     public void test_http_security_object_is_null() {
-        SecurityConfigurations securityConfigurations = new SecurityConfigurations();
+        SecurityConfigurations securityConfigurations = new SecurityConfigurations(null);
 
         assertThrows(NullPointerException.class, () -> {
             securityConfigurations.securityFilterChain(null);
@@ -75,7 +75,7 @@ public class InfraTest {
         AuthenticationManager expectedManager = mock(AuthenticationManager.class);
         when(configuration.getAuthenticationManager()).thenReturn(expectedManager);
 
-        SecurityConfigurations securityConfigurations = new SecurityConfigurations();
+        SecurityConfigurations securityConfigurations = new SecurityConfigurations(null);
         AuthenticationManager actualManager = securityConfigurations.authenticationManager(configuration);
 
         assertNotNull(actualManager);
