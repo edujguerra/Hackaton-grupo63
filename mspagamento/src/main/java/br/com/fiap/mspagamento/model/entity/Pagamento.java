@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import br.com.fiap.mspagamento.config.YearMonthDeserializer;
 import br.com.fiap.mspagamento.model.enums.MetodoPagamento;
 import br.com.fiap.mspagamento.model.enums.StatusPagamento;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
 @NoArgsConstructor
@@ -40,6 +41,7 @@ public class Pagamento {
     @NotNull(message = "Data de validade do cartão não pode ser nula.")
     @Column(name = "data_validade", nullable = false)
     @JsonDeserialize(using = YearMonthDeserializer.class)
+    @Schema(description = "Ano e mês no formato MM/yy", example = "12/24")
     private YearMonth data_validade;
 
     @NotBlank(message = "CVV do cartão não pode ser vazio.")
