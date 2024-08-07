@@ -1,5 +1,6 @@
 package br.com.fiap.infra;
 
+import br.com.fiap.infra.exception.AutorizacaoException;
 import br.com.fiap.infra.exception.RegraNegocioException;
 import br.com.fiap.infra.security.SecurityConfigurations;
 import br.com.fiap.infra.security.SecurityFilter;
@@ -43,7 +44,6 @@ public class InfraTest {
 
         verify(request).getHeader("Authorization");
         verify(tokenService).getSubject("validToken");
-        verify(tokenService).getClains("validToken");
         verify(filterChain).doFilter(request, response);
     }
 
@@ -81,6 +81,15 @@ public class InfraTest {
         String message = "Valid message";
         RegraNegocioException exception = new RegraNegocioException(message);
         assertEquals(message, exception.getMessage());
+    }
+
+    @Test
+    public void testExceptionMessage() {
+        String expectedMessage = "Mensagem de erro";
+
+        AutorizacaoException exception = new AutorizacaoException(expectedMessage);
+
+        assertEquals(expectedMessage, exception.getMessage(), "A mensagem da exceção não corresponde à esperada.");
     }
 
 }

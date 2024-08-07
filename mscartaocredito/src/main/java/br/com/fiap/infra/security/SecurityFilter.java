@@ -1,11 +1,13 @@
 package br.com.fiap.infra.security;
 
+import br.com.fiap.infra.exception.AutorizacaoException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,6 +41,11 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var authentication = new UsernamePasswordAuthenticationToken(subject, null, AUTHORITIES);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            if (tokenJWT == null &&
+                    request.getRequestURL().toString().toLowerCase().contains("cartao"))
+            {
+                throw new AutorizacaoException("Token não pode ser vazio.");
             }
             filterChain.doFilter(request, response);
         } catch (Exception ex) {
