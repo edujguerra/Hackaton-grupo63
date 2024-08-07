@@ -27,17 +27,20 @@ public class SecurityFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             var tokenJWT = recuperarToken(request);
+            String url = request.getRequestURL().toString();
 
             if (tokenJWT != null) {
                 var subject = tokenService.getSubject(tokenJWT);
-
                 var authentication = new UsernamePasswordAuthenticationToken(subject, null, AUTHORITIES);
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                throw new UnauthorizedException("Token JWT inválido ou expirado!" );
+            }
+            if (tokenJWT == null &&
+                    request.getRequestURL().toString().toLowerCase().contains("cliente"))
+            {
+                throw new UnauthorizedException("Token não pode ser vazio.");
             }
             filterChain.doFilter(request, response);
+
         } catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setCharacterEncoding("UTF-8");

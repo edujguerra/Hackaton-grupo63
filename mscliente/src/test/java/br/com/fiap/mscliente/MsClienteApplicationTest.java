@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class MsClienteApplicationTest {
 
     @Test
-    public void test_application_starts_successfully() {
+    public void testarSeAplicacaoIniciaComSucesso() {
         MsClienteApplication.main(new String[] {});
     }
 

@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
@@ -25,6 +26,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    CustomUserDetailsService service ;
 
     AutoCloseable openMocks;
 
@@ -85,4 +89,18 @@ class UserServiceTest {
 
         assertNotNull(token);
     }
+
+//    @Test
+//    public void user_found_returns_custom_user_details() {
+//
+//        User user = new User();
+//        user.setUsuario("testUser");
+//        user.setSenha("testPassword");
+//        Mockito.when(userRepository.findFirstByUsuario("testUser")).thenReturn(Optional.of(user));
+//
+//        UserDetails userDetails = service.loadUserByUsername("testUser");
+//
+//        assertNotNull(userDetails);
+//        Assertions.assertEquals("testUser", userDetails.getUsername());
+//    }
 }

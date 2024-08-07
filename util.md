@@ -7,3 +7,5 @@
 #git push origin main
 
 #mvn package -DskipTests
+
+#docker-compose up --build 
