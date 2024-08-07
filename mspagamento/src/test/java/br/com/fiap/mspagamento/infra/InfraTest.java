@@ -113,7 +113,7 @@ public class InfraTest {
     @Test
     public void test_default_constructor_sets_correct_message_pagd() {
         PagamentoDuplicadoException exception = new PagamentoDuplicadoException();
-        assertEquals("Ocorreu um erro com o pagamento.", exception.getMessage());
+        assertEquals("Pagamento já realizado.", exception.getMessage());
     }
 
     @Test

@@ -74,5 +74,13 @@ public class Pagamento {
         this.valor = valor;
     }
 
+    public Pagamento(Pagamento pagamento) {
+this.cpf = pagamento.getCpf();
+this.numero = pagamento.getNumero();
+this.data_validade = pagamento.getData_validade();
+this.cvv = pagamento.getCvv();
+this.valor = pagamento.getValor();
+}
+
 
 }

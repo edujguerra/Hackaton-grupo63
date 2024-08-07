@@ -18,10 +18,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.YearMonth;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static br.com.fiap.mspagamento.service.PagamentoService.toPagamentoResponse;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -217,7 +214,7 @@ public class ServiceTest {
         @Test
     public void test_valid_card_details_pass_validation() throws Exception {
         PagamentoService pagamentoService = new PagamentoService();
-        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456",  YearMonth.now().plusMonths(6), "123", 100.0);
+        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456",  YearMonth.now(), "123", 100.0);
         CartaoDTO cartaoDTO = new CartaoDTO(1L, "12345678900", 200.0, "1234567890123456",  new Date(System.currentTimeMillis() + 100000000), "123");
         List<CartaoDTO> cartoes = Arrays.asList(cartaoDTO);
 
@@ -242,15 +239,20 @@ public class ServiceTest {
         when(restTemplate.exchange(any(RequestEntity.class), eq(CartaoDTO[].class))).thenReturn(responseEntity);
         pagamentoService.securityFilter = securityFilter;
         pagamentoService.restTemplate = restTemplate;
-        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456", YearMonth.now().plusMonths(6), "123", 100.0);
-        Mockito.when(pagamentoRepository.findFirstByCpf(pagamento.getCpf())).thenReturn(Optional.empty());
-        Mockito.when(pagamentoRepository.save(pagamento)).thenReturn(pagamento);
-    
-        Pagamento result = pagamentoService.realizarPagamento(pagamento);
+        Pagamento pagamento = new Pagamento( validCpf, "1234567890123456", YearMonth.now(), "123", 100.0);
+        Pagamento pagamento2 = new Pagamento(validCpf, "1234567890123456",YearMonth.now(), "123", 1020.0);
+        pagamento2.setStatusPagamento(StatusPagamento.A);
+        pagamento2.setDescricao("registro de pagamento");
+        pagamento2.setMetodoPagamento(MetodoPagamento.CC);
+        Pagamento[] pag= {new Pagamento(pagamento)};
+        Mockito.when(pagamentoRepository.findByCpf(pagamento.getCpf())).thenReturn(Optional.of(pag));
+        Mockito.when(pagamentoRepository.save(pagamento2)).thenReturn(pagamento2);
+
+        Pagamento result = pagamentoService.realizarPagamento(pagamento2);
     
         assertNotNull(result);
         assertEquals(StatusPagamento.A, result.getStatusPagamento());
-        Mockito.verify(pagamentoRepository).save(pagamento);
+        Mockito.verify(pagamentoRepository).save(pagamento2);
     }
     
 }
