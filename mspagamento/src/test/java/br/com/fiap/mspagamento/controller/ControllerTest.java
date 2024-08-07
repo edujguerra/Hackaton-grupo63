@@ -9,9 +9,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -49,5 +58,38 @@ public class ControllerTest {
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(pagamentos, response.getBody());
+    }
+
+    // Returns a list of all Pagamento objects
+    @Test
+    public void test_listar_pagamentos_returns_all_pagamentos() {
+        PagamentoService pagamentoService = mock(PagamentoService.class);
+        PagamentoController pagamentoController = new PagamentoController();
+        ReflectionTestUtils.setField(pagamentoController, "pagamentoService", pagamentoService);
+
+        List<Pagamento> expectedPagamentos = Arrays.asList(new Pagamento(), new Pagamento());
+        when(pagamentoService.listarPagamentos()).thenReturn(expectedPagamentos);
+
+        List<Pagamento> result = pagamentoController.listarPagamentos();
+
+        assertEquals(expectedPagamentos, result);
+        verify(pagamentoService, times(1)).listarPagamentos();
+    }
+
+    // Retrieve a payment by a valid ID
+    @Test
+    public void test_retrieve_payment_by_valid_id() {
+        PagamentoService pagamentoService = mock(PagamentoService.class);
+        PagamentoController pagamentoController = new PagamentoController();
+        ReflectionTestUtils.setField(pagamentoController, "pagamentoService", pagamentoService);
+
+        Integer validId = 1;
+        Pagamento expectedPagamento = new Pagamento();
+        when(pagamentoService.obterPagamentoPorId(validId)).thenReturn(expectedPagamento);
+
+        Pagamento result = pagamentoController.obterPagamentoPorId(validId);
+
+        assertNotNull(result);
+        assertEquals(expectedPagamento, result);
     }
 }
