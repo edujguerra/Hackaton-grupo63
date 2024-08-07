@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -91,8 +92,8 @@ public class ServiceTest {
 
         PagamentoService pagamentoService = new PagamentoService(pagamentoRepository, securityFilter, restTemplate, objectMapper);
 
-        Pagamento pagamento1 = new Pagamento("12345678900", "1111222233334444", new Date(), "123", 100.0);
-        Pagamento pagamento2 = new Pagamento("09876543211", "5555666677778888", new Date(), "456", 200.0);
+        Pagamento pagamento1 = new Pagamento("12345678900", "1111222233334444", YearMonth.now(), "123", 100.0);
+        Pagamento pagamento2 = new Pagamento("09876543211", "5555666677778888",  YearMonth.now(), "456", 200.0);
 
         List<Pagamento> pagamentos = Arrays.asList(pagamento1, pagamento2);
         Mockito.when(pagamentoRepository.findAll()).thenReturn(pagamentos);
@@ -167,7 +168,7 @@ public class ServiceTest {
     }
 
         @Test
-    public void test_valid_cpf_returns_cartoes() {
+    public void test_valid_cpf_returns_cartoes() throws Exception {
         // Arrange
         String validCpf = "12345678900";
         CartaoDTO[] cartaoArray = { new CartaoDTO(1L, validCpf, 5000.0, "1234-5678-9012-3456", new Date(), "123") };
@@ -214,9 +215,9 @@ public class ServiceTest {
     }
 
         @Test
-    public void test_valid_card_details_pass_validation() {
+    public void test_valid_card_details_pass_validation() throws Exception {
         PagamentoService pagamentoService = new PagamentoService();
-        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456", new Date(System.currentTimeMillis() + 100000000), "123", 100.0);
+        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456",  YearMonth.now().plusMonths(6), "123", 100.0);
         CartaoDTO cartaoDTO = new CartaoDTO(1L, "12345678900", 200.0, "1234567890123456",  new Date(System.currentTimeMillis() + 100000000), "123");
         List<CartaoDTO> cartoes = Arrays.asList(cartaoDTO);
 
@@ -227,7 +228,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void test_successful_payment_processing() {
+    public void test_successful_payment_processing() throws Exception {
         PagamentoRepository pagamentoRepository = Mockito.mock(PagamentoRepository.class);
         PagamentoService pagamentoService = new PagamentoService(pagamentoRepository, null, null, null);
         String validCpf = "12345678900";
@@ -241,7 +242,7 @@ public class ServiceTest {
         when(restTemplate.exchange(any(RequestEntity.class), eq(CartaoDTO[].class))).thenReturn(responseEntity);
         pagamentoService.securityFilter = securityFilter;
         pagamentoService.restTemplate = restTemplate;
-        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456", new Date(System.currentTimeMillis() + 86400000), "123", 100.0);
+        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456", YearMonth.now().plusMonths(6), "123", 100.0);
         Mockito.when(pagamentoRepository.findFirstByCpf(pagamento.getCpf())).thenReturn(Optional.empty());
         Mockito.when(pagamentoRepository.save(pagamento)).thenReturn(pagamento);
     

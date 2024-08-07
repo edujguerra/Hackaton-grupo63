@@ -3,6 +3,8 @@ package br.com.fiap.mspagamento.service;
 import java.io.IOException;
 import java.io.ObjectInputFilter.Status;
 import java.net.URI;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,6 +19,7 @@ import br.com.fiap.mspagamento.infra.exception.PagamentoException;
 import br.com.fiap.mspagamento.infra.security.SecurityFilter;
 import br.com.fiap.mspagamento.model.DTO.CartaoDTO;
 import br.com.fiap.mspagamento.model.entity.Pagamento;
+import br.com.fiap.mspagamento.model.enums.MetodoPagamento;
 import br.com.fiap.mspagamento.model.enums.StatusPagamento;
 import br.com.fiap.mspagamento.model.response.PagamentoResponse;
 import br.com.fiap.mspagamento.model.response.RegistrarPagamentoResponse;
@@ -30,6 +33,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -71,18 +75,23 @@ public class PagamentoService {
         }
     }
 
-    public Pagamento realizarPagamento (Pagamento pagamento){
+    public Pagamento realizarPagamento (Pagamento pagamento) throws Exception{
 
-        Pagamento meuPagamento = pagamentoRepository.findFirstByCpf(pagamento.getCpf()).orElse(null);
+        Pagamento[] meuPagamento = pagamentoRepository.findByCpf(pagamento.getCpf()).orElse(null);
+        List<Pagamento> pagamentos = Arrays.asList(meuPagamento);
+
         //todo validar se a forma de verificar pagamento em duplicidade esta correto
-        if(meuPagamento != null && meuPagamento.getData_validade().equals(pagamento.getData_validade())) {
-            System.out.println("Pagamento duplicado!");
-            throw new PagamentoDuplicadoException();
-        }
+        pagamentos.forEach(t -> {
+            if(meuPagamento != null && t.getData_validade().equals(pagamento.getData_validade())&& t.getValor().equals(pagamento.getValor())) {
+                throw new PagamentoDuplicadoException();
+            }
+        });
+
 
         validacaoCartao(pagamento);
         pagamento.setStatusPagamento(StatusPagamento.A);
-
+        pagamento.setDescricao("registro de pagamento");
+        pagamento.setMetodoPagamento(MetodoPagamento.CC);
         return pagamentoRepository.save(pagamento);
 
 //        RegistrarPagamentoResponse pagamentoResponse = toRegistrarPagamentoResponse(pagamento);
@@ -91,16 +100,24 @@ public class PagamentoService {
 
     }
 
-    public void validacaoCartao(Pagamento pagamento){
-        
+    public void validacaoCartao(Pagamento pagamento) throws Exception{
+    
+
         List<CartaoDTO> cartoes = obterCartoes(pagamento.getCpf());
 
         CartaoDTO cartao = cartoes.stream().filter(c -> pagamento.getNumero().equals(c.getNumero())).findFirst().orElse(null);
-
-        
         if (cartao == null) {
             throw new PagamentoException("Há um problema com o numero de cartão informado.");
         }
+        YearMonth yearMonth =
+        YearMonth.from(cartao.getData_validade().toInstant()
+                           .atZone(ZoneId.systemDefault())
+                           .toLocalDate());
+
+        if (!pagamento.getData_validade().equals(yearMonth)) {
+            throw new PagamentoException("Há um problema com a data de validade informada.");
+        }
+
         if (cartao.getData_validade() instanceof Date){
             Date dataValidade = (Date) cartao.getData_validade();
             if (dataValidade.before(new Date())){
@@ -116,8 +133,7 @@ public class PagamentoService {
         }
     }
 
-    List<CartaoDTO> obterCartoes(String cpf) {
-       
+    List<CartaoDTO> obterCartoes(String cpf) throws Exception {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", securityFilter.getTokenBruto());
 
@@ -128,15 +144,25 @@ public class PagamentoService {
 
         RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
         try {
+
             ResponseEntity<CartaoDTO[]> response = restTemplate.exchange(request, CartaoDTO[].class);
             CartaoDTO[] cartaoCreditoArray = response.getBody();
             List<CartaoDTO> cartoes = Arrays.asList(cartaoCreditoArray);
 
+
             return cartoes;
         } catch (HttpServerErrorException e) {
+            e.printStackTrace();
             throw new HttpServerErrorException(e.getStatusCode());
         } catch (NoSuchElementException e) {
+            e.printStackTrace();
             throw new NoSuchElementException("Cartão de crédito não encontrado");
+        }catch (HttpClientErrorException e) {
+            e.printStackTrace();
+            throw new PagamentoException("Erro ao consultar cartões.");
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e.getMessage(),e.getCause());
         }
     }
 

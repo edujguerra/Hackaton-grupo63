@@ -3,7 +3,7 @@ package br.com.fiap.mspagamento.infra.exception;
 public class PagamentoDuplicadoException extends RuntimeException {
 
     public PagamentoDuplicadoException() {
-        super("Este carrinho ja se encontra com pagamento realizado.");
+        super("Pagamento já realizado.");
     }
 
     public PagamentoDuplicadoException(String message) {

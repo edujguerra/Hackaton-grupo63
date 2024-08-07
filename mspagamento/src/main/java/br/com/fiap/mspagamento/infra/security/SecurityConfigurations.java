@@ -24,7 +24,6 @@ public class SecurityConfigurations {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -34,18 +33,9 @@ public class SecurityConfigurations {
                                 "/actuator/health",
                                 "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated())
-                        .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-
-//        return http.csrf().disable()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and().authorizeRequests()
-//                .requestMatchers("/v3/api-docs/**", "/swagger-ui/index.html", "/swagger-ui/**").permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-//                .build();
     }
 
 

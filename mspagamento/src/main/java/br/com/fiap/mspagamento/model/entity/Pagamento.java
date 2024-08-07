@@ -8,8 +8,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 
+import java.time.YearMonth;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import br.com.fiap.mspagamento.config.YearMonthDeserializer;
 import br.com.fiap.mspagamento.model.enums.MetodoPagamento;
 import br.com.fiap.mspagamento.model.enums.StatusPagamento;
 
@@ -34,7 +39,8 @@ public class Pagamento {
 
     @NotNull(message = "Data de validade do cartão não pode ser nula.")
     @Column(name = "data_validade", nullable = false)
-    private Date data_validade;
+    @JsonDeserialize(using = YearMonthDeserializer.class)
+    private YearMonth data_validade;
 
     @NotBlank(message = "CVV do cartão não pode ser vazio.")
     @Column(name = "cvv", nullable = false)
@@ -53,13 +59,12 @@ public class Pagamento {
     @Column(name = "forma_pagamento", nullable = false)
     private MetodoPagamento metodoPagamento;
 
-    @NotBlank(message = "Descrição do pagamento não pode ser vazio.")
     @Column(name = "descricao", nullable = false)
     private String descricao;
 
     public Pagamento(@NotBlank(message = "CPF não pode ser vazio.") String cpf,
             @NotBlank(message = "Numero do cartão não pode ser vazio.") String numero,
-            @NotNull(message = "Data de validade do cartão não pode ser vazio.") Date data_validade,
+            @NotNull(message = "Data de validade do cartão não pode ser vazio.") @NotNull(message = "Data de validade do cartão não pode ser nula.") YearMonth data_validade,
             @NotBlank(message = "CVV do cartão não pode ser vazio.") String cvv,
                      @NotNull(message = "Valor do pagamento não pode ser nulo.") @Positive(message = "O valor deve ser positivo.") Double valor) {
         this.cpf = cpf;
