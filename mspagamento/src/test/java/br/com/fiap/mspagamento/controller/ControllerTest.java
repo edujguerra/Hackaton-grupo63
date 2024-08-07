@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,12 +18,12 @@ import java.util.List;
 public class ControllerTest {
 
     @Test
-    public void test_successful_payment_registration() {
+    public void test_successful_payment_registration() throws Exception {
         PagamentoService pagamentoService = Mockito.mock(PagamentoService.class);
         PagamentoController pagamentoController = new PagamentoController(pagamentoService);
 
-        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456", new Date(), "123", 100.0);
-        Pagamento novoPagamento = new Pagamento("12345678900", "1234567890123456", new Date(), "123", 100.0);
+        Pagamento pagamento = new Pagamento("12345678900", "1234567890123456", YearMonth.now(), "123", 100.0);
+        Pagamento novoPagamento = new Pagamento("12345678900", "1234567890123456", YearMonth.now(), "123", 100.0);
         novoPagamento.setId(1L);
 
         Mockito.when(pagamentoService.realizarPagamento(Mockito.any(Pagamento.class))).thenReturn(novoPagamento);
